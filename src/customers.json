@@ -1,0 +1,203 @@
+[
+  {
+    "id": "000",
+    "name": "Caroline Lobel",
+    "phone": "201-555-1111",
+    "email": "carolinelobel@studentholdings.org",
+    "res-hall": "Delta Gamma",
+    "laundrystatus": "picked-up",
+    "bag-condition": "good",
+    "activestatus": "active",
+    "detergent": "unscented"
+  },
+  {
+    "id": "001",
+    "name": "Patrice Power",
+    "phone": "305-555-1111",
+    "email": "patricepower@studentholdings.org",
+    "res-hall": "Delta Gamma",
+    "laundrystatus": "being-cleaned",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "002",
+    "name": "Willie Wildcat",
+    "phone": "973-555-1111",
+    "email": "williewildcat@xyz.com",
+    "res-hall": "Bobb Hall",
+    "laundrystatus": "bag-missing",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "003",
+    "name": "Morty Shapiro",
+    "phone": "917-555-1111",
+    "email": "mortyshapiro@xyz.com",
+    "res-hall": "McCulloch Hall",
+    "laundrystatus": "picked-up",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "004",
+    "name": "Sophie Fields",
+    "phone": "201-777-1111",
+    "email": "sophiefields@xyz.com",
+    "res-hall": "Lincoln",
+    "laundrystatus": "being-cleaned",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "005",
+    "name": "Zoe Lobel",
+    "phone": "201-555-2222",
+    "email": "zoelobel@xyz.com",
+    "res-hall": "AEPi",
+    "laundrystatus": "out-for-delivery",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "006",
+    "name": "Ally Smith",
+    "phone": "914-555-7777",
+    "email": "allysmith@xyz.com",
+    "res-hall": "Alison",
+    "laundrystatus": "delivered",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "007",
+    "name": "Sam Smith",
+    "phone": "646-555-1111",
+    "email": "samsmith@xyz.com",
+    "res-hall": "Willard",
+    "laundrystatus": "picked-up",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "008",
+    "name": "John Green",
+    "phone": "646-555-7777",
+    "email": "johngreen@xyz.com",
+    "res-hall": "1838 Chicago",
+    "laundrystatus": "out-for-delivery",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "009",
+    "name": "Robert Schmidt",
+    "phone": "847-555-9999",
+    "email": "robertschmidt@xyz.com",
+    "res-hall": "SMQ",
+    "laundrystatus": "out-for-delivery",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "010",
+    "name": "Meredith Grey",
+    "phone": "201-555-3333",
+    "email": "meredithgrey@xyz.com",
+    "res-hall": "1856 Orrington",
+    "laundrystatus": "picked-up",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "011",
+    "name": "Christina Yang",
+    "phone": "305-555-6666",
+    "email": "christinayang@xyz.com",
+    "res-hall": "West Fairchild",
+    "laundrystatus": "being-cleaned",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "012",
+    "name": "Alex Karev",
+    "phone": "973-555-7777",
+    "email": "alexkarev@xyz.com",
+    "res-hall": "Jones Hall",
+    "laundrystatus": "bag-missing",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "013",
+    "name": "Derek Shepherd",
+    "phone": "917-555-8888",
+    "email": "derekshepherd@xyz.com",
+    "res-hall": "McCulloch Hall",
+    "laundrystatus": "picked-up",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "014",
+    "name": "Lexie Grey",
+    "phone": "201-777-9999",
+    "email": "lexiegrey@xyz.com",
+    "res-hall": "Lincoln",
+    "laundrystatus": "being-cleaned",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "015",
+    "name": "Richard Webber",
+    "phone": "201-555-4444",
+    "email": "richardwebber@xyz.com",
+    "res-hall": "Bobb Hall",
+    "laundrystatus": "out-for-delivery",
+    "bag-condition": "good",
+    "activestatus": "active"
+  },
+  {
+    "id": "016",
+    "name": "Arizona Robbins",
+    "phone": "914-555-9999",
+    "email": "arizonarobbins@xyz.com",
+    "res-hall": "Willard",
+    "laundrystatus": "delivered",
+    "bag-condition": "bad",
+    "activestatus": "active"
+  },
+  {
+    "id": "017",
+    "name": "Mark Sloan",
+    "phone": "646-555-8888",
+    "email": "marksloan@xyz.com",
+    "res-hall": "McCulloch Hall",
+    "laundrystatus": "picked-up",
+    "bag-condition": "bad",
+    "activestatus": "inactive"
+  },
+  {
+    "id": "018",
+    "name": "Miranda Bailey",
+    "phone": "646-555-3333",
+    "email": "mirandabailey@xyz.com",
+    "res-hall": "1838 Chicago",
+    "laundrystatus": "out-for-delivery",
+    "bag-condition": "bad",
+    "activestatus": "inactive"
+  },
+  {
+    "id": "019",
+    "name": "Jo Wilson",
+    "phone": "847-555-1111",
+    "email": "jowilson@xyz.com",
+    "res-hall": "SMQ",
+    "laundrystatus": "delivered",
+    "bag-condition": "good",
+    "activestatus": "inactive"
+  }
+]

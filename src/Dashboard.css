@@ -1,0 +1,202 @@
+/* HEADER */
+.headerbutton{
+    background-color: #FFCDD2;
+    border-color: #6a09a4;
+    margin-right: 10;
+}
+
+/* BAG STATUSES FOR DATATABLE */
+
+.delivered-to-dorm {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #C8E6C9;
+    color: #256029;
+}
+
+.bag-missing {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FFCDD2;
+    color: #C63737;
+}
+
+/*.being-cleaned {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FEEDAF;
+    color: #8A5340;
+}*/
+
+.picked-up {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #B3E5FC;
+    color: #23547B;
+}
+
+.delivered-to-SH {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #ECCFFF;
+    color: #694382;
+}
+
+.delivered-to-SH-button {
+    margin-right: 10;
+    background-color: #ECCFFF;
+    color: #694382;
+    border-color: #694382;
+}
+
+.out-of-service {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: lightgrey;
+    color: #474549;
+}
+
+.start-of-quarter {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: lightgrey;
+    color: #474549;
+}
+
+.underweight {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: lightgrey;
+    color: #474549;
+}
+.active {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #C8E6C9;
+    color: #256029;
+}
+.inactive {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: lightgrey;
+    color: #474549;
+}
+.overweight {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FFCDD2;
+    color: #C63737;
+}
+
+.scented {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FFAF7A;
+    color: #FF6600;
+}
+
+.unscented {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #E9D3FF;
+    color: #842BD7;
+}
+
+.yes{
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #C8E6C9;
+    color: #256029;
+}
+
+.No{
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FFCDD2;
+    color: #C63737;
+}
+
+.None{
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #FFCDD2;
+    color: #C63737;
+}
+
+.status-proposal {
+    background-color: #FFD8B2;
+    color: #805B36;
+}
+
+/* CUSTOMER SEARCH */
+.card-search {
+    max-width: 50%;
+}
+.card-list {
+    min-width: 70%;
+    max-width: 100%;
+}
