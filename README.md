@@ -3,6 +3,10 @@ This app is designed for use by Ink Tank to track bulk orders from inquiry to fu
 
 The database used is Firebase. The ink-tank-bulk-orders project and database can be found in firebase under tech@studentholdings.org account (or the account of current tech managers). 
 
+## Instaling packages in bulk from package.json
+
+### `yarn install`
+
 ## Instaling packages
 
 ### `yarn add`
