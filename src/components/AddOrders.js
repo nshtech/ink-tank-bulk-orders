@@ -23,7 +23,7 @@ import '../Dashboard.css';
 //import { arrayToHash } from '@fullcalendar/core/util/object';
 
 
-export class AddCustomers extends Component {
+export class AddOrders extends Component {
 
     constructor() {
         super();

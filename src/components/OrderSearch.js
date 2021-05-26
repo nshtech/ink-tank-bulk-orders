@@ -20,7 +20,7 @@ import '../Dashboard.css';
 //import { arrayToHash } from '@fullcalendar/core/util/object';
 
 
-export class CustomerSearch extends Component {
+export class OrderSearch extends Component {
 
     constructor() {
         super();

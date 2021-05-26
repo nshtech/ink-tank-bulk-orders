@@ -18,7 +18,7 @@ import '../Dashboard.css';
 //import { arrayToHash } from '@fullcalendar/core/util/object';
 
 
-export class BagTracker extends Component {
+export class OrderTracker extends Component {
 
     constructor() {
         super();

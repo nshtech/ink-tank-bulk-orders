@@ -7,10 +7,10 @@ import {AppProfile} from './AppProfile';
 import { Button } from 'primereact/button';
 import {Route} from 'react-router-dom';
 import {Dashboard} from './components/Dashboard';
-import { CustomerSearch } from './components/CustomerSearch';
-import { BagTracker } from './components/BagTracker';
+import { OrderSearch } from './components/OrderSearch';
+import { OrderTracker } from './components/OrderTracker';
 import { OrderSheet } from './components/OrderSheet';
-import { AddCustomers } from './components/AddCustomers';
+import { AddOrders } from './components/AddOrders';
 import {FormsDemo} from './components/FormsDemo';
 import {SampleDemo} from './components/SampleDemo';
 import {DataDemo} from './components/DataDemo';
@@ -158,8 +158,24 @@ class App extends Component {
     createMenu() {
         this.menu = [
           {label: 'Dashboard', icon: 'pi pi-fw pi-home', command: () => {window.location = '#/'}},
-            { label: 'Add New', icon: 'pi pi-fw pi-user-plus', to: '/addcustomers' },
-            { label: 'Bag Tracker', icon: 'pi pi-fw pi-check', to: '/bagtracker' },
+          {
+            label: 'Order Details',
+            icon: 'pi pi-fw pi-users',
+            items: [
+                {
+                    label: 'Search',
+                    icon: 'pi pi-fw pi-search',
+                    to: '/ordersearch'
+                },
+                {
+                    label: 'Add New Order Inquiry',
+                    icon: 'pi pi-fw pi-user-plus',
+                    to: '/addorders'
+                }
+
+            ],
+        },
+            { label: 'Bag Tracker', icon: 'pi pi-fw pi-check', to: '/ordertracker' },
             { label: 'History', icon: 'pi pi-fw pi-inbox', to: '/ordersheet' },
 
         ];
@@ -281,10 +297,10 @@ class App extends Component {
                         </div>
                         <div className="layout-main">
                             <Route path="/" exact component={Dashboard} />
-                            <Route path="/customersearch" component={CustomerSearch} />
-                            <Route path="/bagtracker" component={BagTracker} />
+                            <Route path="/ordersearch" component={OrderSearch} />
+                            <Route path="/ordertracker" component={OrderTracker} />
                             <Route path="/ordersheet" component={OrderSheet} />
-                            <Route path="/addcustomers" component={AddCustomers} />
+                            <Route path="/addorders" component={AddOrders} />
                             <Route path="/menudemo" component={MenusDemo} />
                         </div>
 
