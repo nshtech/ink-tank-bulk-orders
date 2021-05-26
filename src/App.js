@@ -175,7 +175,7 @@ class App extends Component {
 
             ],
         },
-            { label: 'Bag Tracker', icon: 'pi pi-fw pi-check', to: '/ordertracker' },
+            { label: 'Order Tracker', icon: 'pi pi-fw pi-check', to: '/ordertracker' },
             { label: 'History', icon: 'pi pi-fw pi-inbox', to: '/ordersheet' },
 
         ];

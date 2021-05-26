@@ -29,11 +29,9 @@ export class CustomerSheet extends Component {
             editing: false
         };
         // this.edit = this.edit.bind(this);
-        this.save = this.save.bind(this);
         this.export = this.export.bind(this);
         this.onStatusFilterChange = this.onStatusFilterChange.bind(this);
 
-        this.generalEditor = this.generalEditor.bind(this);
     }
     export() {
         this.dt.exportCSV();
@@ -45,35 +43,7 @@ export class CustomerSheet extends Component {
     //     this.growl.show({ severity: 'info', summary: 'Editing Enabled', detail: 'Save changes before continuing' });
     // }
 
-    save() {
-        this.setState({ editing: false });
-        this.growl.clear();
-    }
-
-    onEditorValueChange(props, value) {
-        firebase.database().ref('/customers/' + props.rowData.id + '/' + props.field).set(value)
-        let updatedCustomers = [...props.value];
-        updatedCustomers[props.rowIndex][props.field] = value;
-        this.setState({ customers: updatedCustomers });
-        console.log(props)
-    }
-
-    inputTextEditor(props, field) {
-        return <InputText type="text" value={props.rowData[field]} onChange={(e) => this.onEditorValueChange(props, e.target.value)} />;
-    }
-
-    generalEditor(props) {
-        return this.inputTextEditor(props, ' ');
-    }
-
-    phoneValidator(props) {
-        let value = props.rowData[props.field]
-        return value[3] === '-' && value.length === 12;
-    }
-    emailValidator(props) {
-        let value = props.rowData[props.field]
-        return value && value.length > 0;
-    }
+   
 
 /* --------------- Filters ---------------- */
     statusBodyTemplate(rowData) {
@@ -156,14 +126,14 @@ export class CustomerSheet extends Component {
                 <div className="card">
                     <h1>Ink Tank Bulk Orders Dashboard</h1>
                     <p>This page will list either just current or all ongoing and past ink tank bulk orders.</p>
-                    <DataTable value={this.state.customers} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
+                    <DataTable value={this.state.customers} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} >
                         <Column field="id" header="ID" sortable={true} />
                         <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search name" exportable={false}/>
-                        <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false}/>
-                        <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }}  sortable={true} body={this.weightBodyTemplate} exportable={false}/>
-                        <Column field="detergent" header="Detergent" style={{ maxWidth: 100 }} sortable={true} body={this.detergentBodyTemplate} />
-                        <Column field="fabric_softener" header="Fabric Softener" style={{ maxWidth: 100 }} sortable={true} body={this.fabricSoftenerBodyTemplate} exportable={false}/>
-                        <Column field="special_request" header="Special Requests" style={{ maxWidth: 100 }} sortable={true} body={this.specialRequestBodyTemplate} exportable={false}/>
+                        <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
+                        <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
+                        <Column field="detergent" header="Detergent" style={{ maxWidth: 100 }} sortable={true}  />
+                        <Column field="fabric_softener" header="Fabric Softener" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="special_request" header="Special Requests" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                         
                     </DataTable>
                 </div>
