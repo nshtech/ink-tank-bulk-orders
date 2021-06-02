@@ -48,15 +48,16 @@ export class CustomerSheet extends Component {
 
 /* --------------- Filters ---------------- */
     statusBodyTemplate(rowData) {
-        var laundryStatusDisplay = {
-            'picked-up': 'picked up',
-            'delivered-to-SH': 'delivered to SH',
-            'delivered-to-dorm': 'delivered to dorm',
-            'out-of-service': 'out of service',
-            'bag-missing': 'bag missing',
-            'start-of-quarter': 'start of quarter'
+        var orderStatusDisplay = {
+            'quote': 'quote',
+            'confirmed': 'confirmed',
+            'invoiced': 'invoiced',
+            'in-production': 'in production',
+            'shipped': 'shipped',
+            'fulfilled': 'fulfilled',
+            'cancelled': 'cancelled'
         }
-        return <span className={rowData.laundrystatus}>{laundryStatusDisplay[rowData.laundrystatus]}</span>;
+        return <span className={rowData.status}>{orderStatusDisplay[rowData.status]}</span>;
     }
 
     weightBodyTemplate(rowData) {
@@ -103,7 +104,7 @@ export class CustomerSheet extends Component {
         const customerArray = [];
         firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                if (childSnapshot.val().activestatus === 'active') {
+                if (childSnapshot.val().active === 'True') {
                     customerArray.push(childSnapshot.toJSON());
                 }
             });
@@ -112,6 +113,7 @@ export class CustomerSheet extends Component {
         });
         this.setState({ customers: customerArray });
         this.setState({ bulk_orders: customerArray })
+        console.log('bulk orders: ',customerArray)
     }
 
     render() {
@@ -129,14 +131,14 @@ export class CustomerSheet extends Component {
                     <h1>Ink Tank Bulk Orders Dashboard</h1>
                     <p>This page will list either just current or all ongoing and past ink tank bulk orders.</p>
                     <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} >
-                        <Column field="id" header="ID" sortable={true} />
+                        <Column field="order_id" header="ID" sortable={true} />
                         <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search name" exportable={false}/>
                         <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
                         <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
                         <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
                         <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                         <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
-                        <Column field="status" header="status" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="status" header="status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
                         
                     </DataTable>
                 </div>

@@ -7,7 +7,7 @@
 
 /* BAG STATUSES FOR DATATABLE */
 
-.delivered-to-dorm {
+.fulfilled {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
@@ -18,7 +18,7 @@
     color: #256029;
 }
 
-.bag-missing {
+.cancelled {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
@@ -29,7 +29,7 @@
     color: #C63737;
 }
 
-/*.being-cleaned {
+.in-production {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
@@ -38,9 +38,9 @@
     letter-spacing: .3px;
     background-color: #FEEDAF;
     color: #8A5340;
-}*/
+}
 
-.picked-up {
+.quote {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
@@ -50,8 +50,18 @@
     background-color: #B3E5FC;
     color: #23547B;
 }
+.confirmed {
+    border-radius: 2px;
+    padding: .25em .5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+    background-color: #f8caf8;
+    color: #da44b4;
+}
 
-.delivered-to-SH {
+.invoiced {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
@@ -69,7 +79,7 @@
     border-color: #694382;
 }
 
-.out-of-service {
+.shipped {
     border-radius: 2px;
     padding: .25em .5em;
     text-transform: uppercase;
