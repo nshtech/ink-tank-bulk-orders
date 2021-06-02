@@ -136,7 +136,7 @@ export class CustomerSheet extends Component {
                         <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
                         <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                         <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
-                        <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="status" header="status" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                         
                     </DataTable>
                 </div>
