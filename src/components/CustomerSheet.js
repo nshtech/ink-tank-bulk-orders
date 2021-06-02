@@ -26,7 +26,8 @@ export class CustomerSheet extends Component {
         this.state = {
             customers: [],
             selectedStatus: null,
-            editing: false
+            editing: false,
+            bulk_orders: []
         };
         // this.edit = this.edit.bind(this);
         this.export = this.export.bind(this);
@@ -100,7 +101,7 @@ export class CustomerSheet extends Component {
 
     componentDidMount() {
         const customerArray = [];
-        firebase.database().ref('/customers').on('value', function (snapshot) {
+        firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 if (childSnapshot.val().activestatus === 'active') {
                     customerArray.push(childSnapshot.toJSON());
@@ -110,6 +111,7 @@ export class CustomerSheet extends Component {
             console.log(customerArray[0])
         });
         this.setState({ customers: customerArray });
+        this.setState({ bulk_orders: customerArray })
     }
 
     render() {
@@ -126,14 +128,15 @@ export class CustomerSheet extends Component {
                 <div className="card">
                     <h1>Ink Tank Bulk Orders Dashboard</h1>
                     <p>This page will list either just current or all ongoing and past ink tank bulk orders.</p>
-                    <DataTable value={this.state.customers} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} >
+                    <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} >
                         <Column field="id" header="ID" sortable={true} />
                         <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search name" exportable={false}/>
-                        <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
-                        <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
-                        <Column field="detergent" header="Detergent" style={{ maxWidth: 100 }} sortable={true}  />
-                        <Column field="fabric_softener" header="Fabric Softener" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
-                        <Column field="special_request" header="Special Requests" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
+                        <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
+                        <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
+                        <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                        <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                         
                     </DataTable>
                 </div>
