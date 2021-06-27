@@ -24,11 +24,13 @@ export class OrderTracker extends Component {
         super();
         this.state = {
             customers: [],
+            bulk_orders: [],
             selectedStatus: null,
             selectedReshall: null,
             editing: false,
             loading: true,
-            selectedCustomers: null
+            selectedCustomers: null,
+            selectedOrders: null
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
@@ -401,16 +403,20 @@ export class OrderTracker extends Component {
 
     loadInitialState = async () => {
         const customerArray = [];
-        firebase.database().ref('/customers').on('value', function (snapshot) {
+        firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                if (childSnapshot.val().activestatus === 'active' ) {
+                if (childSnapshot.val().active === 'True' ) {
                     customerArray.push(childSnapshot.toJSON());
                 }
 
             });
+            console.log(customerArray)
+            console.log(customerArray[0])
         });
         this.setState({ customers: customerArray });
+        this.setState({ bulk_orders: customerArray });
         this.setState({ loading: false });
+        console.log('bulk orders in ordertracking: ', customerArray);
 
     }
 
@@ -423,6 +429,8 @@ export class OrderTracker extends Component {
         const reshallFilter = this.renderReshallFilter();
         const allcustomers = this.state.customers;
         const currentcustomers = this.state.selectedCustomers;
+        const allbulkorders = this.state.bulk_orders;
+        const currentorders = this.state.selectedOrders;
 
         /* --------------- RETURN ---------------- */
         /* ---------------- edit mode ------------*/
@@ -460,17 +468,27 @@ export class OrderTracker extends Component {
                         <h1>Ink Tank Bulk Order Tracker</h1>
                         <p>This page will be where sales/finance team members can update the status of an order or the team member assigned to it.</p>
                         <p>ONLY individuals running operations should be accessing this page.</p>
-                        <DataTable value={this.state.customers} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true}
+                        <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true}
                         editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}
-                        footer={this.displaySelection(this.state.selectedCustomers)} selection={this.state.selectedCustomers} onSelectionChange={e => this.setState({ selectedCustomers: e.value })}>
+                        footer={this.displaySelection(this.state.selectedOrders)} selection={this.state.selectedOrders} onSelectionChange={e => this.setState({ selectedOrders: e.value })}>
                             <Column selectionMode="multiple" style={{ width: '3em' }} />
-                            <Column field="id" header="ID" sortable={true} />
+                            <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
-                            <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
+                            <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
+                            <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
+                            <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                            <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                            <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+
+                            {/* <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
+                            <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} /> 
                             <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter} />
                             <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
 
-                            <Column field="weekweight" header="Bag Weight" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="weekweight" header="Bag Weight" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/> */}
                         </DataTable>
                     </div>
                 </div>
@@ -487,16 +505,24 @@ export class OrderTracker extends Component {
 
                 <div id="elmid">
                     <div className="card">
-                        <h1>Rez Ops Bag Tracker</h1>
+                        <h1>Ink Tank Bulk Order Tracker</h1>
                         <p>This page will be where sales/finance team members can update the status of an order or the team member assigned to it.</p>
                         <p>ONLY individuals running operations should be accessing this page.</p>
-                        <DataTable value={this.state.customers} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
-                            <Column field="id" header="ID" sortable={true} />
+                        <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
+                            <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
-                            <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
+                            <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
+                            <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
+                            <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                            <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
+                            <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+                            {/* <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
                             <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  />
                             <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
-                            <Column field="weekweight" header="Bag Weight" style={{ maxWidth: 100 }} sortable={true} />
+                            <Column field="weekweight" header="Bag Weight" style={{ maxWidth: 100 }} sortable={true} /> */}
 
                         </DataTable>
                     </div>
