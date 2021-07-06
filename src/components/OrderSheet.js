@@ -22,6 +22,7 @@ export class OrderSheet extends Component {
         this.state = {
             customers: [],
             orders: [],
+            bulk_orders: [],
             selectedStatus: null,
             editing: false
         };
@@ -109,12 +110,12 @@ export class OrderSheet extends Component {
 
     componentDidMount() {
         const customerArray = [];
-        firebase.database().ref('/customers').on('value', function (snapshot) {
+        firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 customerArray.push(childSnapshot.toJSON());
             });
         });
-        this.setState({ customers: customerArray });
+        this.setState({ bulk_orders: customerArray });
         const orderArray = [];
         firebase.database().ref('/orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
@@ -136,12 +137,15 @@ export class OrderSheet extends Component {
                     <h1>Order Database</h1>
                     <p>This will show all updates to orders and who was assigned to the order at that time. This will create accountability if an order goes wrong and will help pinpoint issues in orders if they arise.</p>
                     <p>All members of the InkTank team should have read and write access to this database.</p>
-                    <DataTable value={this.state.orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
+                    <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
                         <Column field="date" header="Date" sortable={true} filter filterPlaceholder="Search by date"/>
-                        <Column field="id" header="ID" sortable={true} filter filterPlaceholder="Search by ID"/>
-                        <Column field="weight" header="Weight" sortable={true} filter filterPlaceholder="Search by weight"/>
-                        <Column field="weightstatus" header="Overweight" sortable={true} body={this.weightBodyTemplate} />
-                        <Column field="laundrystatus" header="Status" sortable={true} body={this.statusBodyTemplate} filter filterElement={statusFilter}/>
+                        <Column field="team_member" header="Team Member" sortable={true} filter filterPlaceholder="Search by team member"/>
+                        <Column field="order_id" header="ID" sortable={true} filter filterPlaceholder="Search by ID"/>
+                        <Column field="organization" header="Organization" sortable={true} filter filterPlaceholder="Search by organization"/>
+                        <Column field="name" header="Name" sortable={true} filter filterPlaceholder="Search by name"/>
+                        <Column field="status" header="Status" sortable={true}/>
+
+                        
                     </DataTable>
                 </div>
             </div>
