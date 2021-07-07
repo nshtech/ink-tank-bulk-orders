@@ -26,8 +26,9 @@ export class OrderSearch extends Component {
         super();
         this.state = {
             customers: [],
-            orders: [],
+            bulk_orders: [],
             selectedCustomer: null,
+            selectedOrder: null,
             editing: false,
             newplanYear: null,
             newplanQuarter: null,
@@ -244,19 +245,12 @@ export class OrderSearch extends Component {
     /* --------------- Filters ---------------- */
     componentDidMount() {
         const customerArray = [];
-        firebase.database().ref('/customers').on('value', function (snapshot) {
+        firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 customerArray.push(childSnapshot.toJSON());
             });
         });
-        this.setState({ customers: customerArray });
-        const orderArray = [];
-        firebase.database().ref('/orders').on('value', function (snapshot) {
-            snapshot.forEach(function (childSnapshot) {
-                orderArray.push(childSnapshot.toJSON());
-            });
-        });
-        this.setState({ orders: orderArray });
+        this.setState({ bulk_orders: customerArray });
     }
 
     render() {
@@ -272,130 +266,44 @@ export class OrderSearch extends Component {
                 'bag-missing': 'bag missing'
             }
 
-
-            if (this.state.editing) {
-                
-                //this.setState({ newplanYear: null });
-                //this.setState({ newplanQuarter: null });
-                return (
-                <div style={{ display: 'flex' }}>
+            return (
+                <div style={{display: 'flex'}}>
                     <div className="card card-search">
-                        <DataTable value={this.state.customers} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
+                        <DataTable value={this.state.bulk_orders} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
                             responsive={true} autoLayout={true} selection={this.state.selectedCustomer} onSelectionChange={e => this.setState({ selectedCustomer: e.value })}>
-                            <Column field="id" header="ID" sortable={true} />
-                            <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" />
+                            <Column field="order_id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
+                            <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
+                            <Column field="organization" header="Organization" sortable filter filterPlaceholder="Search name" />
                         </DataTable>
                     </div>
-                    <div className="card card-list"> <p className={customer.activestatus} style={{ marginRight: 15 }}>{customer.activestatus}</p>
+                    <div className="card card-list">  <p className={customer.active} style={{ marginRight: 15 }}>Active: {customer.active}</p>
                         <h1>{customer.name}</h1>
                         <div style={{ display: 'flex' }}>
-                            <p className={customer.laundrystatus} style={{ marginRight: 15 }}>{laundryStatusDisplay[customer.laundrystatus]}</p>
-                            <p className={customer.weightstatus} style={{ marginRight: 15 }}>{customer.weightstatus}</p>
-                        </div>
-                        <div style={{ display: 'flex' }}>
-                            <div style={{ minWidth: '50%' }}>
+                            <div style={{ minWidth: '50%'  }}>
                                 <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Account Information</h3>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '1em', paddingRight: 15 }}>Customer ID: {customer.id}</p>
-                                <div className="p-field p-grid">
-                                    <label htmlFor="firstname3" className="p-col-fixed" style={{ width: '110px' }}>Laundry Plan:</label>
-                                    <div className="p-col">
-                                        <Dropdown  value={this.state.newplanYear} options={this.state.planSelectYear} onChange={(e) => {this.onPlanYearValueChange(e.target.value);}} placeholder={customer.plan.substring(0,9)}/>
-                                        <Dropdown  value={this.state.newplanQuarter} options={this.state.planSelectQuarter} onChange={(e) => {this.onPlanQuarterValueChange(e.target.value);}} placeholder={this.displayPlanQuarters(customer.plan.substring(10))}/>
-
-                                    </div>
-                                </div>
-                                <div className="p-field p-grid">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '110px' }}>Max Weight:</label>
-                                    <div className="p-col">
-                                    <Dropdown  value={this.state.newmax} options={this.state.planSelectWeight} onChange={(e) => {this.onMaxweightValueChange(e.target.value);}} placeholder={customer.maxweight}/>
-                                    </div>
-
-                                </div>
-                                <div className="p-field p-grid">
-
-                                <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '200px' }}>Active Status:</label>
-
-                                <div className="p-col">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '110px' }}>Active:</label>
-                                    <RadioButton value="active" name="Active" onChange={(e) => this.setState({newactive: e.value})} checked={customer.activestatus === 'active'} />
-
-
-                                </div>
-                                <div className="p-col">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '110px' }}>Inactive:</label>
-                                    <RadioButton value="inactive" name="Inactive" onChange={(e) => this.setState({newactive: e.value})} checked={customer.activestatus === 'inactive'} />
-                                </div>
-                                </div>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Order ID: {customer.order_id}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Organization: {customer.organization}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Blank: {customer.blank}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Shipping Address: {customer.ship_address}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Design: {customer.design}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Tax Exempt: {customer.tax_exempt}</p>
+                            
                             </div>
                             <div style={{ minWidth: '50%' }}>
                                 <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Contact Information</h3>
-                                <div className="p-field p-grid">
-                                    <label htmlFor="firstname3" className="p-col-fixed" style={{ width: '120px' }}>Residential Hall:</label>
-                                    <div className="p-col">
-                                        <Dropdown  value={this.state.newreshall} options={this.state.planSelectReshall} onChange={(e) => {this.onReshallValueChange(e.target.value);}} placeholder={customer.reshall}/>
-                                    </div>
-                                </div>
-                                <div className="p-field p-grid">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '120px' }}>Email:</label>
-                                    <div className="p-col">
-                                        <InputText type="text" placeholder={customer.email} onChange={(e) => { this.onEmailValueChange(e.target.value); }}/>
-                                    </div>
-                                </div>
-                                <div className="p-field p-grid">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '120px' }}>Phone:</label>
-                                    <div className="p-col">
-                                        <InputText type="text" placeholder={customer.phone} onChange={(e) => { this.onPhoneValueChange(e.target.value); }}/>
-                                    </div>
-                                </div>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Email: {customer.email}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Phone: {customer.phone}</p>
                             </div>
                         </div>
-                        <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} icon="pi pi-save" iconPos="left" label="SAVE" onClick={() => {this.save(customer)}}>
+                        <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} icon="pi pi-pencil" iconPos="left" label="EDIT" onClick={this.edit}>
                         </Button>
+                        {/* <h3 style={{ marginBlockStart: '1em', marginBlockEnd: 0 }}>Bag Weight History</h3> */}
+                        {/* <Chart type="line" data={data} /> */}
+                        {/* <Editor style={{ height: '320px' }} value={this.state.text} onTextChange={(e) => this.setState({ text: e.htmlValue })} /> */}
                     </div>
                 </div>
-                );
-            } else {
-                return (
-                    <div style={{display: 'flex'}}>
-                        <div className="card card-search">
-                            <DataTable value={this.state.customers} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
-                                responsive={true} autoLayout={true} selection={this.state.selectedCustomer} onSelectionChange={e => this.setState({ selectedCustomer: e.value })}>
-                                <Column field="id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
-                                <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
-                            </DataTable>
-                        </div>
-                        <div className="card card-list">  <p className={customer.activestatus} style={{ marginRight: 15 }}>{customer.activestatus}</p>
-                            <h1>{customer.name}</h1>
-                            <div style={{ display: 'flex' }}>
-                                <p className={customer.laundrystatus} style={{ marginRight: 15 }}>{laundryStatusDisplay[customer.laundrystatus]}</p>
-                                <p className={customer.weightstatus} style={{ marginRight: 15 }}>{customer.weightstatus}</p>
+            );
 
-                            </div>
-                            <div style={{ display: 'flex' }}>
-                                <div style={{ minWidth: '50%'  }}>
-                                    <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Account Information</h3>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Customer ID: {customer.id}</p>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Laundry Plan: {customer.plan}</p>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Max Weight: {customer.maxweight}</p>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Overages: {customer.quarter_overages}</p>
-                                
-                                </div>
-                                <div style={{ minWidth: '50%' }}>
-                                    <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Contact Information</h3>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Residential Hall: {customer.reshall}</p>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Email: {customer.email}</p>
-                                    <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Phone: {customer.phone}</p>
-                                </div>
-                            </div>
-                            <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} icon="pi pi-pencil" iconPos="left" label="EDIT" onClick={this.edit}>
-                            </Button>
-                            {/* <h3 style={{ marginBlockStart: '1em', marginBlockEnd: 0 }}>Bag Weight History</h3> */}
-                            {/* <Chart type="line" data={data} /> */}
-                            {/* <Editor style={{ height: '320px' }} value={this.state.text} onTextChange={(e) => this.setState({ text: e.htmlValue })} /> */}
-                        </div>
-                    </div>
-                );
-            }
         } else {
             var header = <div style={{ textAlign: 'left' }}>
             </div>;
@@ -403,14 +311,15 @@ export class OrderSearch extends Component {
             return (
                 <div style={{ display: 'flex' }}>
                     <div className="card card-search">
-                        <DataTable value={this.state.customers} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
+                        <DataTable value={this.state.bulk_orders} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
                         responsive={true} autoLayout={true} selection={this.state.selectedCustomer} onSelectionChange={e => this.setState({ selectedCustomer: e.value })}>
-                            <Column field="id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
+                            <Column field="order_id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
                             <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
+                            <Column field="organization" header="Organization" sortable filter filterPlaceholder="Search name" />
                         </DataTable>
                     </div>
                     <div className="card card-list">
-                        <h1>Select a Customer</h1>
+                        <h1>Select an Order</h1>
                     </div>
                 </div>
             );
