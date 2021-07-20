@@ -98,7 +98,7 @@ export class OrderTracker extends Component {
 
     async onEditorValueChange(props, value) {
 
-        firebase.database().ref('/customers/' + props.rowData.id + '/' + props.field).set(value)
+        firebase.database().ref('/bulk_orders/' + props.rowData.id + '/' + props.field).set(value)
         const db = firebase.database().ref();
         var currWeight = value;
         var currDay = new Date().getDate();
@@ -113,26 +113,25 @@ export class OrderTracker extends Component {
         var currDate = currYear + '-' + currMonth + '-'+currDay;
         var fullDate = new Date().toDateString();
         var currTime = new Date().toLocaleTimeString('it-IT');
-        db.child('/orders/' + currDate + props.rowData.id).once("value")
+        db.child('/history/' + currDate + props.rowData.id).once("value")
             .then(snapshot => {
                 if (!snapshot.val()) {
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id).set(0)
-                    db.child('/orders/' + currDate +' '+currTime+' - '+props.rowData.id + '/weight').set(currWeight);
-                    db.child('/orders/' + currDate+' '+currTime+' - ' + props.rowData.id + '/maxweight').set(props.rowData.maxweight);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.id);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/laundrystatus').set(props.rowData.laundrystatus);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weightstatus').set(props.rowData.weightstatus);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id).set(0)
+                    db.child('/history/' + currDate +' '+currTime+' - '+props.rowData.id + '/blank').set(props.rowData.blank);
+                    db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.id + '/design').set(props.rowData.design);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.order_id);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/team_member').set(props.rowData.team_member);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/status').set(props.rowData.status);
                 }
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/date').set(currDate+' '+ currTime);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weight').set(currWeight);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/maxweight').set(props.rowData.maxweight);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.id);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/laundrystatus').set(props.rowData.laundrystatus);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weightstatus').set(props.rowData.weightstatus);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/date').set(currDate+' '+ currTime);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/blank').set(props.rowData.blank);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.order_id);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/team_member').set(props.rowData.team_member);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/status').set(props.rowData.status);
 
             })
-        firebase.database().ref('/customers/' + props.rowData.id + '/last_weight_updated').set(currDate + ' ' + currTime)
-        const curr = await this.updateWeightStatus(props,value, currDate);
+        firebase.database().ref('/history/' + props.rowData.id + '/last_quote_updated').set(currDate + ' ' + currTime)
+        
     }
 
     inputTextEditor(props, field) {
@@ -143,31 +142,8 @@ export class OrderTracker extends Component {
         return this.inputTextEditor(props, ' ');
     }
 
-    // onRowEditInit(event) {
-    //     this.clonedCars[event.data.vin] = { ...event.data };
-    // }
-
-    // onRowEditSave(event) {
-    //     if (this.onRowEditorValidator(event.data)) {
-    //         delete this.clonedCars[event.data.vin];
-    //         this.growl.show({ severity: 'success', summary: 'Success', detail: 'Car is updated' });
-    //     }
-    //     else {
-    //         this.growl.show({ severity: 'error', summary: 'Error', detail: 'Brand is required' });
-    //     }
-    // }
-
-    // onRowEditCancel(event) {
-    //     let cars = [...this.state.cars2];
-    //     cars[event.index] = this.clonedCars[event.data.vin];
-    //     delete this.clonedCars[event.data.vin];
-    //     this.setState({
-    //         cars2: cars
-    //     })
-    // }
-
-    bagStatusEditor(allcustomers, currentcustomers, newstatus) {
-        let updatedCustomers = [...allcustomers];
+    bagStatusEditor(allorders, currentorder, newstatus) {
+        let updatedOrders = [...allorders];
         const db = firebase.database().ref()
         var currDay = new Date().getDate();
         var currMonth = new Date().getMonth() +1;
@@ -182,81 +158,70 @@ export class OrderTracker extends Component {
         //var currDate = new Date().toDateString();
         var currTime = new Date().toLocaleTimeString('it-IT');
 
-        if (currentcustomers) {
-            var ids = Object.keys(currentcustomers).map(function (key) {
-                return currentcustomers[key].id;
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].id;
             });
-            updatedCustomers.map(each => {
+            updatedOrders.map(each => {
                 if (ids.includes(each.id)) {
-                    each.laundrystatus = newstatus;
-                    if (newstatus == 'out-of-service') {
-                        each.weightstatus = 'N/A'
-                        each.weekweight = 'N/A'
-                        db.child('/customers/'+each.id+'/weekweight').set('N/A');
-                        db.child('/customers/'+each.id+'/weightstatus').set('N/A');
+                    each.status = newstatus;
+                    if (newstatus === 'cancelled') {
+                        each.final_total = 'N/A'
+                        db.child('/bulk_orders/'+each.id+'/active').set('False');
                     }
-                    firebase.database().ref('/customers/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
+                    firebase.database().ref('/bulk_order/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
 
-                    db.child('/orders/' + currDate + each.id).once("value")
+                    db.child('/history/' + currDate + each.id).once("value")
                         .then(snapshot => {
                             if (!snapshot.val()) {
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id).set(0)
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weight').set(each.weekweight);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/maxweight').set(each.maxweight);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.id);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/laundrystatus').set(each.laundrystatus);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weightstatus').set(each.weightstatus);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id).set(0)
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/blank').set(each.blank);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/design').set(each.design);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.order_id);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/team_member').set(each.team_member);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/status').set(each.status);
                             }
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/date').set(currDate+' '+ currTime);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weight').set(each.weekweight);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/maxweight').set(each.maxweight);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.id);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/laundrystatus').set(each.laundrystatus);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weightstatus').set(each.weightstatus);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/date').set(currDate+' '+ currTime);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/design').set(each.design);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.order_id);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/team_member').set(each.team_member);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/status').set(each.status);
 
                         })
 
                 }
             })
-            this.setState({ customers: updatedCustomers });
+            this.setState({ customers: updatedOrders });
         }
-        console.log('bagStatusEditor currentcustomers: ',currentcustomers);
-        this.dothisfirst(currentcustomers, newstatus)
+        console.log('bagStatusEditor currentorder: ',currentorder);
+        this.dothisfirst(currentorder, newstatus)
 
     }
 
 
-    dothisfirst(currentcustomers, newstatus) {
-        console.log('currentcustomers: ',currentcustomers);
+    dothisfirst(currentorder, newstatus) {
+        console.log('currentorder: ',currentorder);
         console.log('newstatus: ',newstatus);
-        if (currentcustomers) {
-            var ids = Object.keys(currentcustomers).map(function (key) {
-                return currentcustomers[key].id;
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].id;
             });
             console.log('ids: ',ids);
-            var query = firebase.database().ref("customers").orderByKey();
+            var query = firebase.database().ref("bulk_orders").orderByKey();
             query.once("value")
                 .then(function (snapshot) {
-                    var counter=0;
                     snapshot.forEach(function (childSnapshot) {
                         var key = childSnapshot.key;
                         if (ids.includes(key)) {
                             var key = childSnapshot.key;
-                            firebase.database().ref('/customers/' + key + '/' + "laundrystatus").set(newstatus);
-                            console.log('currentcustomers in forEach: ',currentcustomers);
-                            if (newstatus === 'delivered-to-SH' && parseFloat(currentcustomers[counter].weekweight) > parseFloat(currentcustomers[counter].maxweight)) {
-                                firebase.database().ref('/customers/' + key + '/' + "quarter_overages").transaction(function(currOverages) {
-                                    //return currOverages+1;
-                                    return currOverages + parseFloat(currentcustomers[counter].weekweight) - parseFloat(currentcustomers[counter].maxweight);
-                                });
-                            }
-                            counter = counter+1;
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "orderstatus").set(newstatus);
+                            console.log('currentorder in forEach: ',currentorder);
 
                         }
                     });
                 });
         }
-        return currentcustomers
+        return currentorder
     }
 
 
@@ -427,8 +392,8 @@ export class OrderTracker extends Component {
     render() {
         const statusFilter = this.renderStatusFilter();
         const reshallFilter = this.renderReshallFilter();
-        const allcustomers = this.state.customers;
-        const currentcustomers = this.state.selectedCustomers;
+        const allorders = this.state.bulk_orders;
+        const currentorder = this.state.selectedOrders;
         const allbulkorders = this.state.bulk_orders;
         const currentorders = this.state.selectedOrders;
 
@@ -443,17 +408,17 @@ export class OrderTracker extends Component {
                     </Button>
                 </div>
                 <div>
-                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="PICKED UP" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'picked-up')}}>
+                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="PICKED UP" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'picked-up')}}>
                     </Button>
-                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="SH" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'delivered-to-SH') }}>
+                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="SH" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'delivered-to-SH') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="DORM" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'delivered-to-dorm') }}>
+                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="DORM" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'delivered-to-dorm') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="NO SERVICE" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'out-of-service') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="NO SERVICE" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'out-of-service') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="MISSING" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'bag-missing') }}>
+                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="MISSING" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'bag-missing') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="START" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'start-of-quarter') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="START" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'start-of-quarter') }}>
                     </Button>
 
                 </div>
