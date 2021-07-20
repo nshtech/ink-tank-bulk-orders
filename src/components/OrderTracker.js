@@ -26,7 +26,7 @@ export class OrderTracker extends Component {
             customers: [],
             bulk_orders: [],
             selectedStatus: null,
-            selectedReshall: null,
+            selectedTeamMember: null,
             editing: false,
             loading: true,
             selectedCustomers: null,
@@ -36,7 +36,7 @@ export class OrderTracker extends Component {
         this.save = this.save.bind(this);
         this.export = this.export.bind(this);
         this.onStatusFilterChange = this.onStatusFilterChange.bind(this);
-        this.onReshallFilterChange = this.onReshallFilterChange.bind(this);
+        this.onTeamMemberFilterChange = this.onTeamMemberFilterChange.bind(this);
         this.bagStatusEditor = this.bagStatusEditor.bind(this)
         this.displaySelection = this.displaySelection.bind(this)
         this.loadInitialState = this.loadInitialState.bind(this)
@@ -234,28 +234,28 @@ export class OrderTracker extends Component {
 
     /* --------------- Filters ---------------- */
 
-//dropdown for laundrystats
+//dropdown for status
     statusBodyTemplate(rowData) {
-        var laundryStatusDisplay = {
-            'picked-up': 'picked up',
-            'delivered-to-SH': 'delivered to SH',
-            'delivered-to-dorm': 'delivered to dorm',
-            'out-of-service': 'out of service',
-            'bag-missing': 'bag missing',
-            'start-of-quarter': 'start of quarter'
+        var statusDisplay = {
+            'Confirmed': 'confirmed',
+            'In Production': 'in production',
+            'Invoiced': 'invoiced',
+            'Fulfilled': 'fulfilled',
+            'Shipped': 'Shipped',
+            'Quote': 'quote'
         }
-        return <span className={rowData.laundrystatus}>{laundryStatusDisplay[rowData.laundrystatus]}</span>
+        return <span className={rowData.status}>{statusDisplay[rowData.status]}</span>
     }
 
 
     renderStatusFilter() {
         var statuses = [
-            { label: 'Picked Up', value: 'picked-up' },
-            { label: 'Out of Service', value: 'out-of-service' },
-            { label: 'Delivered to SH', value: 'delivered-to-SH' },
-            { label: 'Delivered to Dorm', value: 'delivered-to-dorm' },
-            { label: 'Bag Missing', value: 'bag-missing' },
-            { label: 'Start of Quarter', value: 'start-of-quarter' }
+            { label: 'Confirmed', value: 'confirmed' },
+            { label: 'In Production', value: 'in production' },
+            { label: 'Invoiced', value: 'invoiced' },
+            { label: 'Fulfilled', value: 'fulfilled' },
+            { label: 'Shipped', value: 'Shipped' },
+            { label: 'Quote', value: 'quote' }
         ];
 
         return (
@@ -265,100 +265,50 @@ export class OrderTracker extends Component {
         );
     }
 
-    weightBodyTemplate(rowData) {
-        return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
-    }
+    // weightBodyTemplate(rowData) {
+    //     return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
+    // }
 
 
     onStatusFilterChange(event) {
-        this.dt.filter(event.value, 'laundrystatus', 'equals');
+        this.dt.filter(event.value, 'status', 'equals');
         this.setState({ selectedStatus: event.value });
     }
 
 
 //dropdown for reshall
 
-    reshallBodyTemplate(rowData) {
-        var reshallDisplay = {
-          '560 Lincoln': '560 Lincoln',
-          '720 Emerson': '720 Emerson',
-            '1715 Chicago Ave': '1715 Chicago Ave',
-          '1838 Chicago': '1838 Chicago',
-          '1856 Orrington': '1856 Orrington',
-          '2303 Sheridan': '2303 Sheridan',
-          'Ayers': 'Ayers',
-          'Allison': 'Allison',
-          'Bobb': 'Bobb',
-          'Chapin': 'Chapin',
-          'East Fairchild': 'East Fairchild',
-          'Elder': 'Elder',
-          'West Fairchild': 'West Fairchild',
-          'Foster-Walker': 'Foster-Walker',
-          'Goodrich': 'Goodrich',
-          'Hobart': 'Hobart',
-          'Jones': 'Jones',
-          'Kemper': 'Kemper',
-          'McCulloch': 'McCulloch',
-          'PARC': 'PARC (North Mid Quads)',
-          'Rogers House': 'Rogers House',
-          'Sargent': 'Sargent',
-          'SMQ': 'Shepard Residential College (South Mid Quads)',
-          'Shepard': 'Shepard',
-          'Slivka': 'Slivka',
-          'Willard':  'Willard',
-          'Delta Gamma': 'Delta Gamma',
-          'Kappa Kappa Gamma': 'Kappa Kappa Gamma',
-          'Foster-Walker': 'Foster-Walker',
-            'Zeta Beta Tau (ZBT)': 'Zeta Beta Tau (ZBT)'
+    teammemberBodyTemplate(rowData) {
+        var teammemberDisplay = {
+          'Caden Gaviria': 'Caden Gaviria',
+          'Philippe Manzone': 'Philippe Manzone',
+          'Alec Aragon': 'Alec Aragon',
+          'Shannon Groves': 'Shannon Groves',
+          'Ali Kilic': 'Ali Kilic'
           }
-          return <span className={rowData.reshall}>{reshallDisplay[rowData.reshall]}</span>
+          return <span className={rowData.teammember}>{teammemberDisplay[rowData.teammember]}</span>
     }
 
-    renderReshallFilter() {
-        var reshalls = [
-            { label: '560 Lincoln', value: '560 Lincoln' },
-            { label: '720 Emerson', value: '720 Emerson'},
-            { label: '1715 Chicago', value: '1715 Chicago'},
-            { label: '1838 Chicago', value: '1838 Chicago'},
-            { label: '1856 Orrington', value: '1856 Orrington'},
-            { label: '2303 Sheridan', value: '2303 Sheridan'},
-            { label: 'Ayers', value: 'Ayers'},
-            { label: 'Allison', value: 'Allison'},
-            { label: 'Bobb', value: 'Bobb' },
-            { label: 'Chapin', value: 'Chapin'},
-            { label: 'East Fairchild', value: 'East Fairchild'},
-            { label: 'Elder', value: 'Elder'},
-            { label: 'West Fairchild', value: 'West Fairchild'},
-            { label: 'Foster-Walker', value: 'Foster-Walker'},
-            { label: 'Goodrich', value: 'Goodrich'},
-            { label: 'Hobart', value: 'Hobart'},
-            { label: 'Jones', value: 'Jones' },
-            { label: 'Kemper', value: 'Kemper'},
-            { label: 'McCulloch', value: 'McCulloch'},
-            { label: 'PARC (North Mid Quads)', value: 'PARC'},
-            { label: 'Rogers House', value: 'Rogers House' },
-            { label: 'Sargent', value: 'Sargent'},
-            { label: 'Shepard Residential College (South Mid Quads)', value: 'SMQ'},
-            { label: 'Shepard', value: 'Shepard'},
-            { label: 'Slivka', value: 'Slivka'},
-            { label: 'Willard', value: 'Willard'},
-            { label: 'Delta Gamma', value: 'Delta Gamma'},
-            { label: 'Kappa Kappa Gamma', value: 'Kappa Kappa Gamma'},
-            { label: 'Foster-Walker', value: 'Foster-Walker'},
-            { label: 'Zeta Beta Tau (ZBT)', value: 'Zeta Beta Tau (ZBT)'}
+    renderTeamMemberFilter() {
+        var teammembers = [
+            { label: 'Caden Gaviria', value: 'Caden Gaviria' },
+            { label: 'Philippe Manzone', value: 'Philippe Manzone'},
+            { label: 'Alec Aragon', value: 'Alec Aragon'},
+            { label: 'Shannon Groves', value: 'Shannon Groves'},
+            { label: 'Ali Kilic', value: 'Ali Kilic'}
     ];
 
         return (
 
-            <Dropdown value={this.state.selectedReshall} options={reshalls} onChange={this.onReshallFilterChange}
-             showClear={true} placeholder="Select a Dorm" className="p-column-filter" style={{maxWidth: 200, minWidth: 50}} />
+            <Dropdown value={this.state.selectedTeamMember} options={teammembers} onChange={this.onTeamMemberFilterChange}
+             showClear={true} placeholder="Select a Team Member" className="p-column-filter" style={{maxWidth: 200, minWidth: 50}} />
         );
     }
 
 
-    onReshallFilterChange(event) {
-        this.dt.filter(event.value, 'reshall', 'equals');
-        this.setState({ selectedReshall: event.value });
+    onTeamMemberFilterChange(event) {
+        this.dt.filter(event.value, 'team_member', 'equals');
+        this.setState({ selectedTeamMember: event.value });
     }
 
 
@@ -391,7 +341,7 @@ export class OrderTracker extends Component {
 
     render() {
         const statusFilter = this.renderStatusFilter();
-        const reshallFilter = this.renderReshallFilter();
+        const teammemberFilter = this.renderTeamMemberFilter();
         const allorders = this.state.bulk_orders;
         const currentorder = this.state.selectedOrders;
         const allbulkorders = this.state.bulk_orders;
@@ -408,17 +358,17 @@ export class OrderTracker extends Component {
                     </Button>
                 </div>
                 <div>
-                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="PICKED UP" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'picked-up')}}>
+                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Confirmed" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'confirmed')}}>
                     </Button>
-                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="SH" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'delivered-to-SH') }}>
+                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="In Production" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'in production') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="DORM" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'delivered-to-dorm') }}>
+                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Invoiced" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'invoiced') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="NO SERVICE" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'out-of-service') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Fulfilled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'fulfilled') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="MISSING" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'bag-missing') }}>
+                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shipped" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'Shipped') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="START" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'start-of-quarter') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Quote" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'quote') }}>
                     </Button>
 
                 </div>
