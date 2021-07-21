@@ -125,6 +125,7 @@ export class OrderTracker extends Component {
                 }
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/date').set(currDate+' '+ currTime);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/blank').set(props.rowData.blank);
+                db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.id + '/design').set(props.rowData.design);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.order_id);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/team_member').set(props.rowData.team_member);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/status').set(props.rowData.status);
@@ -169,7 +170,7 @@ export class OrderTracker extends Component {
                         each.final_total = 'N/A'
                         db.child('/bulk_orders/'+each.id+'/active').set('False');
                     }
-                    firebase.database().ref('/bulk_order/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
+                    firebase.database().ref('/bulk_orders/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
 
                     db.child('/history/' + currDate + each.id).once("value")
                         .then(snapshot => {
@@ -191,7 +192,7 @@ export class OrderTracker extends Component {
 
                 }
             })
-            this.setState({ customers: updatedOrders });
+            this.setState({ bulk_orders: updatedOrders });
         }
         console.log('bagStatusEditor currentorder: ',currentorder);
         this.dothisfirst(currentorder, newstatus)
@@ -214,7 +215,7 @@ export class OrderTracker extends Component {
                         var key = childSnapshot.key;
                         if (ids.includes(key)) {
                             var key = childSnapshot.key;
-                            firebase.database().ref('/bulk_orders/' + key + '/' + "orderstatus").set(newstatus);
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "status").set(newstatus);
                             console.log('currentorder in forEach: ',currentorder);
 
                         }
