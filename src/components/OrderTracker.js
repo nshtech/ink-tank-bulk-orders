@@ -23,13 +23,11 @@ export class OrderTracker extends Component {
     constructor() {
         super();
         this.state = {
-            customers: [],
             bulk_orders: [],
             selectedStatus: null,
             selectedTeamMember: null,
             editing: false,
             loading: true,
-            selectedCustomers: null,
             selectedOrders: null
         };
         this.edit = this.edit.bind(this);
@@ -59,48 +57,47 @@ export class OrderTracker extends Component {
     }
 
 
-    updateWeightStatus(props,value, currDate) {
+    // updateWeightStatus(props,value, currDate) {
 
-        console.log(this.state.customers[props.rowIndex])
-        // console.log(props.rowIndex)
+    //     console.log(this.state.customers[props.rowIndex])
+    //     // console.log(props.rowIndex)
 
-        //if (value > props.rowData.maxweight) {
+    //     //if (value > props.rowData.maxweight) {
         
-        //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
-        console.log('value: ',value);
-        console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
-        if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
-            let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
-            console.log('marking as overweight.');
-            firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
-            /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
-            temp.once('value', (snapshot) => {
-                let total = snapshot.val()+over
-                firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
-            })*/
-            let updatedCustomers = this.state.customers;
-            updatedCustomers[props.rowIndex][props.field] = value;
-            updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
-            //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
-            // this.setState({ customers: updatedCustomers });
-            return value
-        }
-        else {
-            console.log('marking as underweight');
-            firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
-            let updatedCustomers = this.state.customers;
-            updatedCustomers[props.rowIndex][props.field] = value;
-            updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
-            // this.setState({ customers: updatedCustomers });
-            return value
-        }
-    }
+    //     //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
+    //     console.log('value: ',value);
+    //     console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
+    //     if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
+    //         let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
+    //         console.log('marking as overweight.');
+    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
+    //         /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
+    //         temp.once('value', (snapshot) => {
+    //             let total = snapshot.val()+over
+    //             firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
+    //         })*/
+    //         let updatedCustomers = this.state.customers;
+    //         updatedCustomers[props.rowIndex][props.field] = value;
+    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
+    //         //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
+    //         // this.setState({ customers: updatedCustomers });
+    //         return value
+    //     }
+    //     else {
+    //         console.log('marking as underweight');
+    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
+    //         let updatedCustomers = this.state.customers;
+    //         updatedCustomers[props.rowIndex][props.field] = value;
+    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
+    //         // this.setState({ customers: updatedCustomers });
+    //         return value
+    //     }
+    // }
 
     async onEditorValueChange(props, value) {
 
-        firebase.database().ref('/bulk_orders/' + props.rowData.id + '/' + props.field).set(value)
+        firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
         const db = firebase.database().ref();
-        var currWeight = value;
         var currDay = new Date().getDate();
         var currMonth = new Date().getMonth() +1;
         if (currMonth < 10) {
@@ -111,27 +108,26 @@ export class OrderTracker extends Component {
         }
         var currYear = new Date().getFullYear();
         var currDate = currYear + '-' + currMonth + '-'+currDay;
-        var fullDate = new Date().toDateString();
         var currTime = new Date().toLocaleTimeString('it-IT');
-        db.child('/history/' + currDate + props.rowData.id).once("value")
+        db.child('/history/' + currDate + props.rowData.order_id).once("value")
             .then(snapshot => {
                 if (!snapshot.val()) {
-                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id).set(0)
-                    db.child('/history/' + currDate +' '+currTime+' - '+props.rowData.id + '/blank').set(props.rowData.blank);
-                    db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.id + '/design').set(props.rowData.design);
-                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.order_id);
-                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/team_member').set(props.rowData.team_member);
-                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/status').set(props.rowData.status);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id).set(0)
+                    db.child('/history/' + currDate +' '+currTime+' - '+props.rowData.order_id + '/blank').set(props.rowData.blank);
+                    db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.order_id + '/design').set(props.rowData.design);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
                 }
-                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/date').set(currDate+' '+ currTime);
-                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/blank').set(props.rowData.blank);
-                db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.id + '/design').set(props.rowData.design);
-                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.order_id);
-                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/team_member').set(props.rowData.team_member);
-                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.id + '/status').set(props.rowData.status);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/date').set(currDate+' '+ currTime);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/blank').set(props.rowData.blank);
+                db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.order_id + '/design').set(props.rowData.design);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
 
             })
-        firebase.database().ref('/history/' + props.rowData.id + '/last_quote_updated').set(currDate + ' ' + currTime)
+        firebase.database().ref('/history/' + props.rowData.order_id + '/last_quote_updated').set(currDate + ' ' + currTime)
         
     }
 
@@ -161,32 +157,32 @@ export class OrderTracker extends Component {
 
         if (currentorder) {
             var ids = Object.keys(currentorder).map(function (key) {
-                return currentorder[key].id;
+                return currentorder[key].order_id;
             });
             updatedOrders.map(each => {
-                if (ids.includes(each.id)) {
+                if (ids.includes(each.order_id)) {
                     each.status = newstatus;
                     if (newstatus === 'cancelled') {
                         each.final_total = 'N/A'
-                        db.child('/bulk_orders/'+each.id+'/active').set('False');
+                        db.child('/bulk_orders/'+each.order_id+'/active').set('False');
                     }
-                    firebase.database().ref('/bulk_orders/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
+                    firebase.database().ref('/bulk_orders/' + each.order_id + '/last_status_updated').set(currDate + ' ' + currTime)
 
-                    db.child('/history/' + currDate + each.id).once("value")
+                    db.child('/history/' + currDate + each.order_id).once("value")
                         .then(snapshot => {
-                            if (!snapshot.val()) {
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id).set(0)
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/blank').set(each.blank);
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/design').set(each.design);
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.order_id);
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/team_member').set(each.team_member);
-                                db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/status').set(each.status);
+                            if (!snapshot.val()) { //why is each.id undefined on firebase?
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id).set(0)
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/blank').set(each.blank);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
                             }
-                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/date').set(currDate+' '+ currTime);
-                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/design').set(each.design);
-                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.order_id);
-                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/team_member').set(each.team_member);
-                            db.child('/history/' + currDate +' '+currTime+' - '+ each.id + '/status').set(each.status);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
 
                         })
 
@@ -205,7 +201,7 @@ export class OrderTracker extends Component {
         console.log('newstatus: ',newstatus);
         if (currentorder) {
             var ids = Object.keys(currentorder).map(function (key) {
-                return currentorder[key].id;
+                return currentorder[key].order_id;
             });
             console.log('ids: ',ids);
             var query = firebase.database().ref("bulk_orders").orderByKey();
@@ -329,7 +325,6 @@ export class OrderTracker extends Component {
             console.log(customerArray)
             console.log(customerArray[0])
         });
-        this.setState({ customers: customerArray });
         this.setState({ bulk_orders: customerArray });
         this.setState({ loading: false });
         console.log('bulk orders in ordertracking: ', customerArray);
