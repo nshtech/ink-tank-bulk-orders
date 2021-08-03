@@ -23,20 +23,18 @@ export class OrderTracker extends Component {
     constructor() {
         super();
         this.state = {
-            customers: [],
             bulk_orders: [],
             selectedStatus: null,
-            selectedReshall: null,
+            selectedTeamMember: null,
             editing: false,
             loading: true,
-            selectedCustomers: null,
             selectedOrders: null
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
         this.export = this.export.bind(this);
         this.onStatusFilterChange = this.onStatusFilterChange.bind(this);
-        this.onReshallFilterChange = this.onReshallFilterChange.bind(this);
+        this.onTeamMemberFilterChange = this.onTeamMemberFilterChange.bind(this);
         this.bagStatusEditor = this.bagStatusEditor.bind(this)
         this.displaySelection = this.displaySelection.bind(this)
         this.loadInitialState = this.loadInitialState.bind(this)
@@ -59,48 +57,47 @@ export class OrderTracker extends Component {
     }
 
 
-    updateWeightStatus(props,value, currDate) {
+    // updateWeightStatus(props,value, currDate) {
 
-        console.log(this.state.customers[props.rowIndex])
-        // console.log(props.rowIndex)
+    //     console.log(this.state.customers[props.rowIndex])
+    //     // console.log(props.rowIndex)
 
-        //if (value > props.rowData.maxweight) {
+    //     //if (value > props.rowData.maxweight) {
         
-        //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
-        console.log('value: ',value);
-        console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
-        if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
-            let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
-            console.log('marking as overweight.');
-            firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
-            /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
-            temp.once('value', (snapshot) => {
-                let total = snapshot.val()+over
-                firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
-            })*/
-            let updatedCustomers = this.state.customers;
-            updatedCustomers[props.rowIndex][props.field] = value;
-            updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
-            //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
-            // this.setState({ customers: updatedCustomers });
-            return value
-        }
-        else {
-            console.log('marking as underweight');
-            firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
-            let updatedCustomers = this.state.customers;
-            updatedCustomers[props.rowIndex][props.field] = value;
-            updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
-            // this.setState({ customers: updatedCustomers });
-            return value
-        }
-    }
+    //     //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
+    //     console.log('value: ',value);
+    //     console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
+    //     if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
+    //         let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
+    //         console.log('marking as overweight.');
+    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
+    //         /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
+    //         temp.once('value', (snapshot) => {
+    //             let total = snapshot.val()+over
+    //             firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
+    //         })*/
+    //         let updatedCustomers = this.state.customers;
+    //         updatedCustomers[props.rowIndex][props.field] = value;
+    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
+    //         //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
+    //         // this.setState({ customers: updatedCustomers });
+    //         return value
+    //     }
+    //     else {
+    //         console.log('marking as underweight');
+    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
+    //         let updatedCustomers = this.state.customers;
+    //         updatedCustomers[props.rowIndex][props.field] = value;
+    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
+    //         // this.setState({ customers: updatedCustomers });
+    //         return value
+    //     }
+    // }
 
     async onEditorValueChange(props, value) {
 
-        firebase.database().ref('/customers/' + props.rowData.id + '/' + props.field).set(value)
+        firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
         const db = firebase.database().ref();
-        var currWeight = value;
         var currDay = new Date().getDate();
         var currMonth = new Date().getMonth() +1;
         if (currMonth < 10) {
@@ -111,28 +108,27 @@ export class OrderTracker extends Component {
         }
         var currYear = new Date().getFullYear();
         var currDate = currYear + '-' + currMonth + '-'+currDay;
-        var fullDate = new Date().toDateString();
         var currTime = new Date().toLocaleTimeString('it-IT');
-        db.child('/orders/' + currDate + props.rowData.id).once("value")
+        db.child('/history/' + currDate + props.rowData.order_id).once("value")
             .then(snapshot => {
                 if (!snapshot.val()) {
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id).set(0)
-                    db.child('/orders/' + currDate +' '+currTime+' - '+props.rowData.id + '/weight').set(currWeight);
-                    db.child('/orders/' + currDate+' '+currTime+' - ' + props.rowData.id + '/maxweight').set(props.rowData.maxweight);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.id);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/laundrystatus').set(props.rowData.laundrystatus);
-                    db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weightstatus').set(props.rowData.weightstatus);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id).set(0)
+                    db.child('/history/' + currDate +' '+currTime+' - '+props.rowData.order_id + '/blank').set(props.rowData.blank);
+                    db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.order_id + '/design').set(props.rowData.design);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
                 }
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/date').set(currDate+' '+ currTime);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weight').set(currWeight);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/maxweight').set(props.rowData.maxweight);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/id').set(props.rowData.id);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/laundrystatus').set(props.rowData.laundrystatus);
-                db.child('/orders/' + currDate +' '+currTime+' - '+ props.rowData.id + '/weightstatus').set(props.rowData.weightstatus);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/date').set(currDate+' '+ currTime);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/blank').set(props.rowData.blank);
+                db.child('/history/' + currDate+' '+currTime+' - ' + props.rowData.order_id + '/design').set(props.rowData.design);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
 
             })
-        firebase.database().ref('/customers/' + props.rowData.id + '/last_weight_updated').set(currDate + ' ' + currTime)
-        const curr = await this.updateWeightStatus(props,value, currDate);
+        firebase.database().ref('/history/' + props.rowData.order_id + '/last_quote_updated').set(currDate + ' ' + currTime)
+        
     }
 
     inputTextEditor(props, field) {
@@ -143,31 +139,8 @@ export class OrderTracker extends Component {
         return this.inputTextEditor(props, ' ');
     }
 
-    // onRowEditInit(event) {
-    //     this.clonedCars[event.data.vin] = { ...event.data };
-    // }
-
-    // onRowEditSave(event) {
-    //     if (this.onRowEditorValidator(event.data)) {
-    //         delete this.clonedCars[event.data.vin];
-    //         this.growl.show({ severity: 'success', summary: 'Success', detail: 'Car is updated' });
-    //     }
-    //     else {
-    //         this.growl.show({ severity: 'error', summary: 'Error', detail: 'Brand is required' });
-    //     }
-    // }
-
-    // onRowEditCancel(event) {
-    //     let cars = [...this.state.cars2];
-    //     cars[event.index] = this.clonedCars[event.data.vin];
-    //     delete this.clonedCars[event.data.vin];
-    //     this.setState({
-    //         cars2: cars
-    //     })
-    // }
-
-    bagStatusEditor(allcustomers, currentcustomers, newstatus) {
-        let updatedCustomers = [...allcustomers];
+    bagStatusEditor(allorders, currentorder, newstatus) {
+        let updatedOrders = [...allorders];
         const db = firebase.database().ref()
         var currDay = new Date().getDate();
         var currMonth = new Date().getMonth() +1;
@@ -182,81 +155,70 @@ export class OrderTracker extends Component {
         //var currDate = new Date().toDateString();
         var currTime = new Date().toLocaleTimeString('it-IT');
 
-        if (currentcustomers) {
-            var ids = Object.keys(currentcustomers).map(function (key) {
-                return currentcustomers[key].id;
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
             });
-            updatedCustomers.map(each => {
-                if (ids.includes(each.id)) {
-                    each.laundrystatus = newstatus;
-                    if (newstatus == 'out-of-service') {
-                        each.weightstatus = 'N/A'
-                        each.weekweight = 'N/A'
-                        db.child('/customers/'+each.id+'/weekweight').set('N/A');
-                        db.child('/customers/'+each.id+'/weightstatus').set('N/A');
+            updatedOrders.map(each => {
+                if (ids.includes(each.order_id)) {
+                    each.status = newstatus;
+                    if (newstatus === 'cancelled') {
+                        each.final_total = 'N/A'
+                        db.child('/bulk_orders/'+each.order_id+'/active').set('False');
                     }
-                    firebase.database().ref('/customers/' + each.id + '/last_status_updated').set(currDate + ' ' + currTime)
+                    firebase.database().ref('/bulk_orders/' + each.order_id + '/last_status_updated').set(currDate + ' ' + currTime)
 
-                    db.child('/orders/' + currDate + each.id).once("value")
+                    db.child('/history/' + currDate + each.order_id).once("value")
                         .then(snapshot => {
-                            if (!snapshot.val()) {
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id).set(0)
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weight').set(each.weekweight);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/maxweight').set(each.maxweight);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.id);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/laundrystatus').set(each.laundrystatus);
-                                db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weightstatus').set(each.weightstatus);
+                            if (!snapshot.val()) { //why is each.id undefined on firebase?
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id).set(0)
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/blank').set(each.blank);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
                             }
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/date').set(currDate+' '+ currTime);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weight').set(each.weekweight);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/maxweight').set(each.maxweight);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/id').set(each.id);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/laundrystatus').set(each.laundrystatus);
-                            db.child('/orders/' + currDate +' '+currTime+' - '+ each.id + '/weightstatus').set(each.weightstatus);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
 
                         })
 
                 }
             })
-            this.setState({ customers: updatedCustomers });
+            this.setState({ bulk_orders: updatedOrders });
         }
-        console.log('bagStatusEditor currentcustomers: ',currentcustomers);
-        this.dothisfirst(currentcustomers, newstatus)
+        console.log('bagStatusEditor currentorder: ',currentorder);
+        this.dothisfirst(currentorder, newstatus)
 
     }
 
 
-    dothisfirst(currentcustomers, newstatus) {
-        console.log('currentcustomers: ',currentcustomers);
+    dothisfirst(currentorder, newstatus) {
+        console.log('currentorder: ',currentorder);
         console.log('newstatus: ',newstatus);
-        if (currentcustomers) {
-            var ids = Object.keys(currentcustomers).map(function (key) {
-                return currentcustomers[key].id;
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
             });
             console.log('ids: ',ids);
-            var query = firebase.database().ref("customers").orderByKey();
+            var query = firebase.database().ref("bulk_orders").orderByKey();
             query.once("value")
                 .then(function (snapshot) {
-                    var counter=0;
                     snapshot.forEach(function (childSnapshot) {
                         var key = childSnapshot.key;
                         if (ids.includes(key)) {
                             var key = childSnapshot.key;
-                            firebase.database().ref('/customers/' + key + '/' + "laundrystatus").set(newstatus);
-                            console.log('currentcustomers in forEach: ',currentcustomers);
-                            if (newstatus === 'delivered-to-SH' && parseFloat(currentcustomers[counter].weekweight) > parseFloat(currentcustomers[counter].maxweight)) {
-                                firebase.database().ref('/customers/' + key + '/' + "quarter_overages").transaction(function(currOverages) {
-                                    //return currOverages+1;
-                                    return currOverages + parseFloat(currentcustomers[counter].weekweight) - parseFloat(currentcustomers[counter].maxweight);
-                                });
-                            }
-                            counter = counter+1;
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "status").set(newstatus);
+                            console.log('currentorder in forEach: ',currentorder);
 
                         }
                     });
                 });
         }
-        return currentcustomers
+        return currentorder
     }
 
 
@@ -269,28 +231,28 @@ export class OrderTracker extends Component {
 
     /* --------------- Filters ---------------- */
 
-//dropdown for laundrystats
+//dropdown for status
     statusBodyTemplate(rowData) {
-        var laundryStatusDisplay = {
-            'picked-up': 'picked up',
-            'delivered-to-SH': 'delivered to SH',
-            'delivered-to-dorm': 'delivered to dorm',
-            'out-of-service': 'out of service',
-            'bag-missing': 'bag missing',
-            'start-of-quarter': 'start of quarter'
+        var statusDisplay = {
+            'Confirmed': 'confirmed',
+            'In Production': 'in production',
+            'Invoiced': 'invoiced',
+            'Fulfilled': 'fulfilled',
+            'Shipped': 'Shipped',
+            'Quote': 'quote'
         }
-        return <span className={rowData.laundrystatus}>{laundryStatusDisplay[rowData.laundrystatus]}</span>
+        return <span className={rowData.status}>{statusDisplay[rowData.status]}</span>
     }
 
 
     renderStatusFilter() {
         var statuses = [
-            { label: 'Picked Up', value: 'picked-up' },
-            { label: 'Out of Service', value: 'out-of-service' },
-            { label: 'Delivered to SH', value: 'delivered-to-SH' },
-            { label: 'Delivered to Dorm', value: 'delivered-to-dorm' },
-            { label: 'Bag Missing', value: 'bag-missing' },
-            { label: 'Start of Quarter', value: 'start-of-quarter' }
+            { label: 'Confirmed', value: 'confirmed' },
+            { label: 'In Production', value: 'in production' },
+            { label: 'Invoiced', value: 'invoiced' },
+            { label: 'Fulfilled', value: 'fulfilled' },
+            { label: 'Shipped', value: 'Shipped' },
+            { label: 'Quote', value: 'quote' }
         ];
 
         return (
@@ -300,100 +262,50 @@ export class OrderTracker extends Component {
         );
     }
 
-    weightBodyTemplate(rowData) {
-        return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
-    }
+    // weightBodyTemplate(rowData) {
+    //     return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
+    // }
 
 
     onStatusFilterChange(event) {
-        this.dt.filter(event.value, 'laundrystatus', 'equals');
+        this.dt.filter(event.value, 'status', 'equals');
         this.setState({ selectedStatus: event.value });
     }
 
 
 //dropdown for reshall
 
-    reshallBodyTemplate(rowData) {
-        var reshallDisplay = {
-          '560 Lincoln': '560 Lincoln',
-          '720 Emerson': '720 Emerson',
-            '1715 Chicago Ave': '1715 Chicago Ave',
-          '1838 Chicago': '1838 Chicago',
-          '1856 Orrington': '1856 Orrington',
-          '2303 Sheridan': '2303 Sheridan',
-          'Ayers': 'Ayers',
-          'Allison': 'Allison',
-          'Bobb': 'Bobb',
-          'Chapin': 'Chapin',
-          'East Fairchild': 'East Fairchild',
-          'Elder': 'Elder',
-          'West Fairchild': 'West Fairchild',
-          'Foster-Walker': 'Foster-Walker',
-          'Goodrich': 'Goodrich',
-          'Hobart': 'Hobart',
-          'Jones': 'Jones',
-          'Kemper': 'Kemper',
-          'McCulloch': 'McCulloch',
-          'PARC': 'PARC (North Mid Quads)',
-          'Rogers House': 'Rogers House',
-          'Sargent': 'Sargent',
-          'SMQ': 'Shepard Residential College (South Mid Quads)',
-          'Shepard': 'Shepard',
-          'Slivka': 'Slivka',
-          'Willard':  'Willard',
-          'Delta Gamma': 'Delta Gamma',
-          'Kappa Kappa Gamma': 'Kappa Kappa Gamma',
-          'Foster-Walker': 'Foster-Walker',
-            'Zeta Beta Tau (ZBT)': 'Zeta Beta Tau (ZBT)'
+    teammemberBodyTemplate(rowData) {
+        var teammemberDisplay = {
+          'Caden Gaviria': 'Caden Gaviria',
+          'Philippe Manzone': 'Philippe Manzone',
+          'Alec Aragon': 'Alec Aragon',
+          'Shannon Groves': 'Shannon Groves',
+          'Ali Kilic': 'Ali Kilic'
           }
-          return <span className={rowData.reshall}>{reshallDisplay[rowData.reshall]}</span>
+          return <span className={rowData.teammember}>{teammemberDisplay[rowData.teammember]}</span>
     }
 
-    renderReshallFilter() {
-        var reshalls = [
-            { label: '560 Lincoln', value: '560 Lincoln' },
-            { label: '720 Emerson', value: '720 Emerson'},
-            { label: '1715 Chicago', value: '1715 Chicago'},
-            { label: '1838 Chicago', value: '1838 Chicago'},
-            { label: '1856 Orrington', value: '1856 Orrington'},
-            { label: '2303 Sheridan', value: '2303 Sheridan'},
-            { label: 'Ayers', value: 'Ayers'},
-            { label: 'Allison', value: 'Allison'},
-            { label: 'Bobb', value: 'Bobb' },
-            { label: 'Chapin', value: 'Chapin'},
-            { label: 'East Fairchild', value: 'East Fairchild'},
-            { label: 'Elder', value: 'Elder'},
-            { label: 'West Fairchild', value: 'West Fairchild'},
-            { label: 'Foster-Walker', value: 'Foster-Walker'},
-            { label: 'Goodrich', value: 'Goodrich'},
-            { label: 'Hobart', value: 'Hobart'},
-            { label: 'Jones', value: 'Jones' },
-            { label: 'Kemper', value: 'Kemper'},
-            { label: 'McCulloch', value: 'McCulloch'},
-            { label: 'PARC (North Mid Quads)', value: 'PARC'},
-            { label: 'Rogers House', value: 'Rogers House' },
-            { label: 'Sargent', value: 'Sargent'},
-            { label: 'Shepard Residential College (South Mid Quads)', value: 'SMQ'},
-            { label: 'Shepard', value: 'Shepard'},
-            { label: 'Slivka', value: 'Slivka'},
-            { label: 'Willard', value: 'Willard'},
-            { label: 'Delta Gamma', value: 'Delta Gamma'},
-            { label: 'Kappa Kappa Gamma', value: 'Kappa Kappa Gamma'},
-            { label: 'Foster-Walker', value: 'Foster-Walker'},
-            { label: 'Zeta Beta Tau (ZBT)', value: 'Zeta Beta Tau (ZBT)'}
+    renderTeamMemberFilter() {
+        var teammembers = [
+            { label: 'Caden Gaviria', value: 'Caden Gaviria' },
+            { label: 'Philippe Manzone', value: 'Philippe Manzone'},
+            { label: 'Alec Aragon', value: 'Alec Aragon'},
+            { label: 'Shannon Groves', value: 'Shannon Groves'},
+            { label: 'Ali Kilic', value: 'Ali Kilic'}
     ];
 
         return (
 
-            <Dropdown value={this.state.selectedReshall} options={reshalls} onChange={this.onReshallFilterChange}
-             showClear={true} placeholder="Select a Dorm" className="p-column-filter" style={{maxWidth: 200, minWidth: 50}} />
+            <Dropdown value={this.state.selectedTeamMember} options={teammembers} onChange={this.onTeamMemberFilterChange}
+             showClear={true} placeholder="Select a Team Member" className="p-column-filter" style={{maxWidth: 200, minWidth: 50}} />
         );
     }
 
 
-    onReshallFilterChange(event) {
-        this.dt.filter(event.value, 'reshall', 'equals');
-        this.setState({ selectedReshall: event.value });
+    onTeamMemberFilterChange(event) {
+        this.dt.filter(event.value, 'team_member', 'equals');
+        this.setState({ selectedTeamMember: event.value });
     }
 
 
@@ -413,7 +325,6 @@ export class OrderTracker extends Component {
             console.log(customerArray)
             console.log(customerArray[0])
         });
-        this.setState({ customers: customerArray });
         this.setState({ bulk_orders: customerArray });
         this.setState({ loading: false });
         console.log('bulk orders in ordertracking: ', customerArray);
@@ -426,9 +337,9 @@ export class OrderTracker extends Component {
 
     render() {
         const statusFilter = this.renderStatusFilter();
-        const reshallFilter = this.renderReshallFilter();
-        const allcustomers = this.state.customers;
-        const currentcustomers = this.state.selectedCustomers;
+        const teammemberFilter = this.renderTeamMemberFilter();
+        const allorders = this.state.bulk_orders;
+        const currentorder = this.state.selectedOrders;
         const allbulkorders = this.state.bulk_orders;
         const currentorders = this.state.selectedOrders;
 
@@ -443,17 +354,17 @@ export class OrderTracker extends Component {
                     </Button>
                 </div>
                 <div>
-                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="PICKED UP" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'picked-up')}}>
+                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Confirmed" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'confirmed')}}>
                     </Button>
-                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="SH" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'delivered-to-SH') }}>
+                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="In Production" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'in production') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="DORM" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'delivered-to-dorm') }}>
+                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Invoiced" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'invoiced') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="NO SERVICE" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'out-of-service') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Fulfilled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'fulfilled') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="MISSING" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'bag-missing') }}>
+                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shipped" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'Shipped') }}>
                     </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="START" onClick={() => { this.bagStatusEditor(allcustomers, currentcustomers, 'start-of-quarter') }}>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Quote" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'quote') }}>
                     </Button>
 
                 </div>
