@@ -93,7 +93,7 @@ export class OrderTracker extends Component {
     //         return value
     //     }
     // }
-
+    //updating input text editors like order_quote, final_total, blank
     async onEditorValueChange(props, value) {
 
         firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
@@ -118,6 +118,8 @@ export class OrderTracker extends Component {
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
                 }
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/date').set(currDate+' '+ currTime);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/blank').set(props.rowData.blank);
@@ -125,6 +127,8 @@ export class OrderTracker extends Component {
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
 
             })
         firebase.database().ref('/history/' + props.rowData.order_id + '/last_quote_updated').set(currDate + ' ' + currTime)
@@ -139,6 +143,8 @@ export class OrderTracker extends Component {
         return this.inputTextEditor(props, ' ');
     }
 
+    //updating state variables for status then calls do_this_first that updates firebase (team_member)
+    //update in bulk then update in firebse
     bagStatusEditor(allorders, currentorder, newstatus) {
         let updatedOrders = [...allorders];
         const db = firebase.database().ref()
@@ -170,7 +176,7 @@ export class OrderTracker extends Component {
 
                     db.child('/history/' + currDate + each.order_id).once("value")
                         .then(snapshot => {
-                            if (!snapshot.val()) { //why is each.id undefined on firebase?
+                            if (!snapshot.val()) { 
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id).set(0)
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/blank').set(each.blank);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
@@ -386,13 +392,13 @@ export class OrderTracker extends Component {
                             <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
                             <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
-                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
                             <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
                             <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
-                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false} editor={this.generalEditor}/>
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
 
                             {/* <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
                             <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} /> 
@@ -423,11 +429,11 @@ export class OrderTracker extends Component {
                             <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
                             <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
-                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
                             <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true}  />
                             <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false}/>
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             {/* <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
