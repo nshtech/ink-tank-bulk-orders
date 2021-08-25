@@ -220,14 +220,14 @@ export class AddOrders extends Component {
         this.setState({ final_total: value });
     }
     onPhoneValueChange(value) {
-        if (value == "NA") {
-            this.setState({ phone: "NA"})
-        }else{
-            if(value[3] ==='-' && value[7]==='-' && value.length===12) {
-                this.setState({ phone: value });
-            }
-        }
-        //this.setState({ newphone: value });
+        // if (value == "NA") {
+        //     this.setState({ phone: "NA"})
+        // }else{
+        //     if(value[3] ==='-' && value[7]==='-' && value.length===12) {
+        //         this.setState({ phone: value });
+        //     }
+        // }
+        this.setState({ phone: value });
         // if value == NA: set to NA; conver to uppercase
         // else; cast as float
         
@@ -285,7 +285,7 @@ export class AddOrders extends Component {
             // var id = this.state.newfirstname.substring(0,1).toLowerCase() +this.state.newlastname.substring(0,1).toLowerCase()+idNum;
             var id = this.state.newid;
             //console.log('NEW ID: ', id);
-            this.messages.show({severity: 'success', summary: 'Success', detail: 'Customer Added!'});
+            this.messages.show({severity: 'success', summary: 'Success', detail: 'Order Added!'});
             const db = firebase.database().ref()
             //updating id count in firebase and then updating state variable
             db.child('/idcount').set(this.state.idcount+1);
@@ -395,16 +395,16 @@ export class AddOrders extends Component {
             });
         });
         this.setState({ orders: orderArray });
-        //var idNum = 0;
+        var idNum = 0;
         firebase.database().ref('/idcount').once('value')
             .then(snapshot => {
                 this.setState({idcount: snapshot.val()})
                 console.log('state var idcount: ', this.state.idcount);
-                //idNum = snapshot.val();
+                idNum = snapshot.val();
                 console.log('id from firebase: ', snapshot.val());
             });
         //console.log('var idNum: ', idNum);
-        //this.setState({idcount: idNum});
+        this.setState({idcount: idNum});
     }
 
     render() {
