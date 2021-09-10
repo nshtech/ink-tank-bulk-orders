@@ -30,7 +30,9 @@ export class AddOrders extends Component {
         this.state = {
             customers: [],
             orders: [],
+            bulk_orders: [],
             selectedCustomer: null,
+            selectedOrders: null,
             editing: false,
             idcount: null,
             newfirstname: null,
@@ -42,67 +44,45 @@ export class AddOrders extends Component {
             newreshall: null,
             newphone: null,
             newemail: null,
+            newaddress: null,
+            newcity: null,
+            newstate: null,
+            newpostalcode: null,
             planSelectYear: [
                 {label: '2020-2021', value: '2020-2021'},
                 {label: '2021-2022', value: '2021-2022'},
                 {label: '2022-2023', value: '2022-2023'},
                 {label: '2023-2024', value: '2023-2024'}
             ],
-            planSelectQuarter: [
-                {label: 'Full Year', value: '-F-W-S'},
-                {label: 'Winter/Spring Quarter', value: '-W-S'},
-                {label: 'Fall Quarter', value: '-F'},
-                {label: 'Winter Quarter', value: '-W'},
-                {label: 'Spring Quarter', value: '-S'},
+            planTeamMember: [
+                { label: 'Caden Gaviria', value: 'Caden Gaviria' },
+                { label: 'Philippe Manzone', value: 'Philippe Manzone'},
+                { label: 'Alec Aragon', value: 'Alec Aragon'},
+                { label: 'Shannon Groves', value: 'Shannon Groves'},
+                { label: 'Ali Kilic', value: 'Ali Kilic'}
+        ],
+            planSelectStatus: [
+                { label: 'Confirmed', value: 'confirmed' },
+                { label: 'In Production', value: 'in production' },
+                { label: 'Invoiced', value: 'invoiced' },
+                { label: 'Fulfilled', value: 'fulfilled' },
+                { label: 'Shipped', value: 'Shipped' },
+                { label: 'Quote', value: 'quote' }
             ],
-            planSelectWeight: [
-                {label: '15 lb/week', value: '15'},
-                {label: '20 lb/week', value: '20'},
-                {label: '25 lb/week', value: '25'},
-            ],
-            planSelectReshall:[
-                {label: 'Choose later', value: 'Choose later'},
-                {label: '560 Lincoln', value: '560 Lincoln'},
-                {label: '720 Emerson', value: '720 Emerson'},
-                { label: '1715 Chicago', value: '1715 Chicago'},
-                {label: '1838 Chicago', value: '1838 Chicago'},
-                {label: '1856 Orrington', value: '1856 Orrington'},
-                {label: '2303 Sheridan', value: '2303 Sheridan'},
-                {label: 'Ayers', value: 'Ayers'},
-                {label: 'Allison', value: 'Allison'},
-                {label: 'Bobb', value: 'Bobb'},
-                {label: 'Chapin', value: 'Chapin'},
-                {label: 'East Fairchild', value: 'East Fairchild'},
-                {label: 'Elder', value: 'Elder'},
-                {label: 'West Fairchild', value: 'West Fairchild'},
-                {label: 'Foster-Walker (PLEX)', value: 'Foster-Walker (PLEX)'},
-                {label: 'Goodrich', value: 'Goodrich'},
-                {label: 'Hobart', value: 'Hobart'},
-                {label: 'Jones', value: 'Jones'},
-                {label: 'Kemper', value: 'Kemper'},
-                {label: 'McCulloch', value: 'McCulloch'},
-                {label: 'PARC (North Mid Quads)', value: 'PARC (North Mid Quads)'},
-                {label: 'Rogers House', value: 'Rogers House'},
-                {label: 'Sargent', value: 'Sargent'},
-                {label: 'Shepard Residential College (South Mid Quads)', value: 'Shepard Residential College (South Mid Quads)'},
-                {label: 'Shepard Hall', value: 'Shepard Hall'},
-                {label: 'Slivka', value: 'Slivka'},
-                {label: 'Willard', value: 'Willard'},
-                {label: 'Delta Gamma', value: 'Delta Gamma'},
-                {label: 'Kappa Kappa Gamma', value: 'Kappa Kappa Gamma'},
-                {label: 'Zeta Beta Tau (ZBT)', value: 'Zeta Beta Tau (ZBT)'}
-
-            ],
+            planYesNo: [
+                {label: 'Yes', value: 'yes'},
+                {label: 'No', value: 'no'}
+            ]
 
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
-        this.onPlanYearValueChange = this.onPlanYearValueChange.bind(this)
-        this.onPlanQuarterValueChange = this.onPlanQuarterValueChange.bind(this)
+        this.onTeamMemberValueChange = this.onTeamMemberValueChange.bind(this)
+        //this.onPlanQuarterValueChange = this.onPlanQuarterValueChange.bind(this)
         //this.getCustomerHistory = this.getCustomerHistory.bind(this)
-        this.displayPlanQuarters = this.displayPlanQuarters.bind(this)
+        //this.displayPlanQuarters = this.displayPlanQuarters.bind(this)
         this.resetNewInfo = this.resetNewInfo.bind(this)
-        this.addCustomer = this.addCustomer.bind(this)
+        this.addBulkOrder = this.addBulkOrder.bind(this)
         this.padId = this.padId.bind(this)
     }
 
@@ -132,116 +112,163 @@ export class AddOrders extends Component {
         //this.resetNewInfo();
     }
 
-    save(customer) {
+    save(bulk_order) {
         this.setState({ editing: false });
         //console.log(this.state.newplan)
-        let allcustomers = [...this.state.customers];
-        let newcustomer = {...this.state.selectedCustomer};
-        if (this.state.newplanyear && this.state.newplanquarter) {
-             newcustomer.plan = this.state.newplanyear+this.state.newplanquarter;
-             //console.log('newplanQuarter: ', this.state.newplanQuarter);
-             //console.log('newplanYear', this.state.newplanYear)
-             firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
-        }
-        else if (this.state.newplanyear) {
-            newcustomer.plan = this.state.newplanyear+customer.plan.substring(9);
-            //console.log('newcustomer.plan: ', newcustomer.plan);
-            //console.log('newplanYear', this.state.newplanYear)
-            //console.log('customer quarter: ', customer.plan.substring(9));
-            firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
-       }
-       else if (this.state.newplanquarter) {
-            newcustomer.plan = customer.plan.substring(0,9)+this.state.newplanquarter;
-            //console.log('newcustomer.plan: ', newcustomer.plan);
-            //console.log('customer year', customer.plan.substring(0,9))
+        let allbulkorders = [...this.state.bulk_orders];
+        let newbulkorder = {...this.state.selectedOrders};
+
+        if (this.state.newaddress && this.state.newcity && this.state.newstate && this.state.newpostalcode) {
+            newbulkorder.ship_address = this.state.newaddress+this.state.newcity+this.state.newstate+this.state.newpostalcode;
             //console.log('newplanQuarter: ', this.state.newplanQuarter);
-            firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
-   }
-        if (this.state.newmax) {
-            newcustomer.maxweight = this.state.newmax;
-            firebase.database().ref('/customers/' + customer.id + '/maxweight').set(newcustomer.maxweight);
+            //console.log('newplanYear', this.state.newplanYear)
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/ship_address').set(newbulkorder.ship_address);
+        }
+
+        if (this.state.blank) {
+            newbulkorder.blank = this.state.blank;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/blank').set(newbulkorder.blank);
        }
-        if (this.state.newreshall) {
-            newcustomer.reshall = this.state.newreshall;
-            firebase.database().ref('/customers/' + customer.id + '/reshall').set(newcustomer.reshall);
+        if (this.state.quantity) {
+            newbulkorder.quantity = this.state.quantity;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/quantity').set(newbulkorder.quantity);
         }
-        if (this.state.newphone) {
-            newcustomer.phone = this.state.newphone;
-            firebase.database().ref('/customers/' + customer.id + '/phone').set(newcustomer.phone);
+        if (this.state.phone) {
+            newbulkorder.phone = this.state.phone;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/phone').set(newbulkorder.phone);
         }
-        if (this.state.newemail) {
-            newcustomer.email = this.state.newemail;
-            firebase.database().ref('/customers/' + customer.id + '/email').set(newcustomer.email)
+        if (this.state.email) {
+            newbulkorder.email = this.state.email;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/email').set(newbulkorder.email)
         }
+        if (this.state.organization) {
+            newbulkorder.organization = this.state.organization;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/organization').set(newbulkorder.organization)
+        }
+        if (this.state.order_quote) {
+            newbulkorder.order_quote = this.state.order_quote;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/order_quote').set(newbulkorder.order_quote)
+        }
+        if (this.state.final_total) {
+            newbulkorder.final_total = this.state.final_total;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/final_total').set(newbulkorder.final_total)
+        }
+        if (this.state.tax_exempt) {
+            newbulkorder.tax_exempt = this.state.tax_exempt;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/tax_exempt').set(newbulkorder.tax_exempt)
+        }
+        if (this.state.team_member) {
+            newbulkorder.order_quote = this.state.team_member;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/team_member').set(newbulkorder.team_member)
+        }
+        if (this.state.design) {
+            newbulkorder.design = this.state.design;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/design').set(newbulkorder.design)
+        }
+        if (this.state.name) {
+            newbulkorder.name = this.state.name;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/name').set(newbulkorder.name)
+        }
+
         let count = 0;
         let individual=null;
-        allcustomers.map(each => {
-            if (newcustomer.id == each.id) {
-                individual = {...allcustomers[count]};
-                individual= newcustomer;
-                allcustomers[count] = individual;
+        allbulkorders.map(each => {
+            if (newbulkorder.id == each.id) {
+                individual = {...allbulkorders[count]};
+                individual= newbulkorder;
+                allbulkorders[count] = individual;
             }
             count = count+1
         })
-        this.setState({ customers: allcustomers });
-        this.setState({selectedCustomer: newcustomer});
+        this.setState({ bulk_orders: allbulkorders });
+        this.setState({selectedOrders: newbulkorder});
         
     }
 
     //CUSTOMER INFORMATION EDITING
-    onFirstNameValueChange(value) {
+    onNameValueChange(value) {
         //console.log('new first name: ', value)
-        this.setState({newfirstname: value});
+        this.setState({name: value});
         
     }
-    onLastNameValueChange(value) {
-        //console.log('new last name: ', value)
-        this.setState({newlastname: value});
-    }
-    onIdValueChange(value) {
-        //console.log('new id name: ', value)
-        this.setState({ newid: value });
-    }
 
-    onPlanYearValueChange(value) {
+    onTeamMemberValueChange(value) {
         //console.log('newPlanYear: ', value)
-        this.setState({ newplanyear: value });
+        this.setState({ team_member: value });
     }
-    onPlanQuarterValueChange(value) {
+    onBlankValueChange(value) {
         //console.log('newPlanQuarter: ', value)
-        this.setState({ newplanquarter: value });
+        this.setState({ blank: value });
     }
-    onMaxweightValueChange(value) {
-        this.setState({ newmax: value });
+    onDesignValueChange(value) {
+        this.setState({ design: value });
     }
-    onReshallValueChange(value) {
-        this.setState({ newreshall: value });
+    onOrganizationValueChange(value) {
+        this.setState({ organization: value });
+    }
+    onTaxExemptValueChange(value) {
+        this.setState({ tax_exempt: value });
+    }
+    onQuantityValueChange(value) {
+        this.setState({ quantity: value });
+    }
+    onOrderQuoteValueChange(value) {
+        //try, execept 
+        this.setState({ order_quote: value });
+    }
+    onFinalTotalValueChange(value) {
+        this.setState({ final_total: value });
     }
     onPhoneValueChange(value) {
-        if(value[3] ==='-' && value[7]==='-' && value.length===12) {
-            this.setState({ newphone: value });
-        }
-        //this.setState({ newphone: value });
+        // if (value == "NA") {
+        //     this.setState({ phone: "NA"})
+        // }else{
+        //     if(value[3] ==='-' && value[7]==='-' && value.length===12) {
+        //         this.setState({ phone: value });
+        //     }
+        // }
+        this.setState({ phone: value });
+        // if value == NA: set to NA; conver to uppercase
+        // else; cast as float
+        
     }
     onEmailValueChange(value) {
         if (value.includes('@') && value.includes('.')) {
-            this.setState({ newemail: value });
+            this.setState({ email: value });
         }
     }
+    onAddressValueChange(value) {
+        this.setState({newaddress: value});  
+    }
+    onCityValueChange(value) {
+        this.setState({ newcity: value});  
+    }
+    onStateValueChange(value) {
+        this.setState({ newstate: value});  
+    }
+    onPostalCodeValueChange(value) {
+        this.setState({ newpostalcode: value});  
+    }
     resetNewInfo() {
-        this.setState({newfirstname: ''});
-        this.setState({newlastname: ''});
-        this.setState({ newid: '' });
-        this.setState({ newplanyear: '' });
-        this.setState({ newplanquarter: ''});
-        this.setState({ newmax: '' });
-        this.setState({ newreshall: '' });
-        this.setState({ newphone: '' });
-        this.setState({ newemail: '' });
-        this.setState({newoverage: ''});
+        this.setState({name: ''});
+        this.setState({ team_member: ''});
+        this.setState({ blank: '' });
+        this.setState({ design: '' });
+        this.setState({ organization: ''});
+        this.setState({ tax_exempt: '' });
+        this.setState({ quantity: '' });
+        this.setState({ quantity: '' });
+        this.setState({ order_quote: '' });
+        this.setState({ final_total: '' });
+        this.setState({ phone: ''});
+        this.setState({ email: ''});
+        this.setState({ newaddress: ''});
+        this.setState({ newstate: ''});
+        this.setState({ newcity: ''});
+        this.setState({ newpostalcode: ''});
     }
 
-    addCustomer() {
+    addBulkOrder() {
         //console.log('new first name: ', this.state.newfirstname);
         //console.log('new last name: ', this.state.newlastname);
         // console.log('new plan year: ', this.state.newplanyear);
@@ -250,16 +277,14 @@ export class AddOrders extends Component {
         // console.log('new res hall: ', this.state.newreshall);
         // console.log('new phone: ', this.state.newphone);
         // console.log('new email: ', this.state.newemail);
-        
         //this.setState({idcount: this.state.idcount+1});
-
-        console.log('updated id Count', this.state.idcount);
+        //console.log('updated id Count', this.state.idcount);
         if(this.state.name !=='' && this.state.organization !== '' && this.state.email !=='' && this.state.phone !== '' && this.state.blank!=='' && this.state.design!=='' && this.state.team_member!==null && this.state.tax_exempt !== null && this.state.quantity !== null && this.state.order_quote !== null && this.state.final_total !== null) {
             
             var idNum = this.padId(this.state.idcount);
             // var id = this.state.newfirstname.substring(0,1).toLowerCase() +this.state.newlastname.substring(0,1).toLowerCase()+idNum;
             var id = this.state.idcount;
-            console.log('NEW ID: ', id);
+            //console.log('NEW ID: ', id);
             this.messages.show({severity: 'success', summary: 'Success', detail: 'Order Added!'});
             const db = firebase.database().ref()
             //updating id count in firebase and then updating state variable
@@ -272,45 +297,48 @@ export class AddOrders extends Component {
                     console.log('id from firebase: ', snapshot.val());
                 });
 
-            const fullname = this.state.newfirstname + ' ' + this.state.newlastname;
-            const email = this.state.newemail
-            const phone = this.state.newphone
-            const reshall = this.state.newreshall
-            const maxweight = this.state.newmax
-            const plan = this.state.newplanyear+this.state.newplanquarter
-            db.child('/customers/'+id).once("value")
+            const name = this.state.name;
+            const email = this.state.email
+            const phone = this.state.phone
+            const organization = this.state.organization
+            const design = this.state.design
+            const blank = this.state.blank
+            const quantity = this.state.quantity
+            const ship_address = this.state.newaddress + this.state.newcity + this.state.newstate + this.state.newpostal_code
+            const final_total = this.state.final_total
+            const order_quote = this.state.order_quote
+            const team_member = this.state.team_member
+            db.child('/bulk_orders/'+id).once("value")
                 .then(snapshot => {
                     if(!snapshot.val()) {
-                        db.child('/customers/'+id+'/activestatus').set("active");
-                        db.child('/customers/'+id+'/bag-condition').set("good");
-                        db.child('/customers/'+id+'/bag-missing').set("false");
-                        db.child('/customers/'+id+'/detergent').set('unscented');
-                        db.child('/customers/'+id+'/email').set(email);
-                        db.child('/customers/'+id+'/fabric_softener').set('No');
-                        db.child('/customers/'+id+'/id').set(id);
-                        db.child('/customers/'+id+'/last_status_updated').set('N/A');
-                        db.child('/customers/'+id+'/last_weight_updated').set('N/A');
-                        db.child('/customers/'+id+'/laundrystatus').set('out-of-service');
-                        db.child('/customers/'+id+'/maxweight').set(maxweight);
-                        db.child('/customers/'+id+'/name').set(fullname);
-                        db.child('/customers/'+id+'/phone').set(phone);
-                        db.child('/customers/'+id+'/plan').set(plan);
-                        db.child('/customers/'+id+'/reshall').set(reshall);
-                        db.child('/customers/'+id+'/weekweight').set("N/A");
-                        db.child('/customers/'+id+'/weightstatus').set("N/A");
+                        db.child('/bulk_orders/'+id+'/status').set("Yes");
+                        db.child('/bulk_orders/'+id+'/email').set(email);
+                        db.child('/bulk_orders/'+id+'/id').set(id);
+                        db.child('/bulk_orders/'+id+'/last_status_updated').set('N/A');
+                        db.child('/bulk_orders/'+id+'/name').set(name);
+                        db.child('/bulk_orders/'+id+'/phone').set(phone);
+                        db.child('/bulk_orders/'+id+'/organization').set(organization);
+                        db.child('/bulk_orders/'+id+'/design').set(design);
+                        db.child('/bulk_orders/'+id+'/blank').set(blank);
+                        db.child('/bulk_orders/'+id+'/ship_address').set(ship_address);
+                        db.child('/bulk_orders/'+id+'/final_total').set(final_total);
+                        db.child('/bulk_orders/'+id+'/order_quote').set(order_quote);
+                        db.child('/bulk_orders/'+id+'/team_member').set(team_member);
+                        db.child('/bulk_orders/'+id+'/quantity').set(quantity);
 
                     }
                 })
 
-            this.setState({newfirstname: ''});
-            this.setState({newlastname: ''});
-            this.setState({ newid: '' });
-            this.setState({ newplanyear: ''});
-            this.setState({ newplanquarter: '' });
-            this.setState({ newmax: '' });
-            this.setState({ newreshall: '' });
-            this.setState({ newphone: '' });
-            this.setState({ newemail: '' });
+            this.setState({email: ''});
+            this.setState({phone: ''});
+            this.setState({ organization: '' });
+            this.setState({ design: ''});
+            this.setState({ blank: '' });
+            this.setState({ ship_address: '' });
+            this.setState({ final_total: '' });
+            this.setState({ order_quote: '' });
+            this.setState({ team_member: '' });
+            this.setState({ quantity: '' });
             //const curr  = await this.resetNewInfo();
        
             //console.log('reset info: ', this.state.newfirstname);
@@ -322,17 +350,44 @@ export class AddOrders extends Component {
 
     }
 
+    // displayPlanQuarters(customerPlan) {
+    //     if (customerPlan) {
+
+    //         if (customerPlan === 'F') {
+    //             const result = 'Fall Quarter';
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'W') {
+    //             const result = 'Winter Quarter' ;
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'S') {
+    //             const result = 'Spring Quarter' ;
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'W-S') {
+    //             const result = 'Winter/Spring Quarter' ;
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'F-W-S') {
+    //             const result = 'Full Year' ;
+    //             return result;
+    //         }
+    //     }
+    // }
+
 
 
     /* --------------- Filters ---------------- */
     componentDidMount() {
         const customerArray = [];
-        firebase.database().ref('/customers').on('value', function (snapshot) {
+        firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 customerArray.push(childSnapshot.toJSON());
             });
         });
         this.setState({ customers: customerArray });
+        this.setState({ bulk_orders: customerArray });
         const orderArray = [];
         firebase.database().ref('/orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
@@ -345,80 +400,93 @@ export class AddOrders extends Component {
             .then(snapshot => {
                 this.setState({idcount: snapshot.val()})
                 console.log('state var idcount: ', this.state.idcount);
-                //idNum = snapshot.val();
+                idNum = snapshot.val();
                 console.log('id from firebase: ', snapshot.val());
             });
-        console.log('var idNum: ', idNum);
+        //console.log('var idNum: ', idNum);
         this.setState({idcount: idNum});
     }
 
     render() {
             var header = <div style={{ textAlign: 'left' }}></div>
-            var customer = this.state.selectedCustomer
+            var bulk_order = this.state.selectedOrders
             //var history = this.getCustomerHistory(customer)
-            var laundryStatusDisplay = {
-                'picked-up': 'picked up',
-                'delivered-to-SH': 'delivered to SH',
-                'delivered-to-dorm': 'delivered to dorm',
-                'out-of-service': 'out of service',
-                'bag-missing': 'bag missing'
-            }
 
             return (
             <div className="card" id="form">
                 <h1>Add New Order Inquiry</h1>
-                <p>This form will be replaced by a form to enter all information about a new order or order inquiry</p>
+                <p>Use this form to enter all information about a new order or order inquiry</p>
 
                 <div className="p-fluid p-formgrid p-grid">
     <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">First Name</label>
-        <InputText value={this.state.newfirstname} id="firstname" type="text" onChange={(e) => { this.onFirstNameValueChange(e.target.value); }}/>
+        <label htmlFor="firstname6">Name</label>
+        <InputText value={this.state.name} id="firstname" type="text" onChange={(e) => { this.onNameValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="lastname6">Last Name</label>
-        <InputText value={this.state.newlastname} id="lastname" type="text" onChange={(e) => { this.onLastNameValueChange(e.target.value); }}/>
+        <label htmlFor="lastname6">Organization</label>
+        <InputText value={this.state.organization} id="lastname" type="text" onChange={(e) => { this.onOrganizationValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">ID</label>
-        <InputText value={this.state.newid} id="firstname" type="text" onChange={(e) => { this.onIdValueChange(e.target.value); }} />
+        <label htmlFor="firstname6">Blank</label>
+        <InputText value={this.state.blank} id="blank" type="text" onChange={(e) => { this.onBlankValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-6">
         <label htmlFor="firstname6">Email</label>
-        <InputText value={this.state.newemail} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }}/>
+        <InputText value={this.state.email} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-6">
         <label htmlFor="firstname6">Phone</label>
-        <InputText value={this.state.newphone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }}/>
+        <InputText value={this.state.phone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }} placeholder='Type Phone Number or "NA"'/>
     </div>
+
+
     <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="address">Laundry Plan Year</label>
-        <Dropdown  value={this.state.newplanyear} options={this.state.planSelectYear} onChange={(e) => {this.onPlanYearValueChange(e.target.value);}} placeholder='Select School Year'/>
+        <label htmlFor="address">Address</label>
+        <InputText value={this.state.address} id="newaddress" type="text" onChange={(e) => { this.onAddressValueChange(e.target.value); }}/>
 
     </div>
     <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="lastname6">Laundry Plan Quarter(s)</label>
-        <Dropdown  value={this.state.newplanquarter} options={this.state.planSelectQuarter} onChange={(e) => {this.onPlanQuarterValueChange(e.target.value);}} placeholder='Select Quarter(s)'/>
-
+        <label htmlFor="lastname6">City</label>
+        <InputText value={this.state.city} id="newaddress" type="text" onChange={(e) => { this.onCityValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="city">Maximum Weight/week</label>
-        <Dropdown  value={this.state.newmax} options={this.state.planSelectWeight} onChange={(e) => {this.onMaxweightValueChange(e.target.value);}} placeholder='Select Weight'/>
+        <label htmlFor="city">State</label>
+        <InputText value={this.state.state} id="newaddress" type="text" onChange={(e) => { this.onStateValueChange(e.target.value); }}/>
+    </div>
+    <div className="p-field p-col-12 p-md-3">
+        <label htmlFor="state">Postal Code</label>
+        <InputText value={this.state.postal_code} id="newaddress" type="text" onChange={(e) => { this.onPostalCodeValueChange(e.target.value); }}/>    </div>
+
+
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="firstname6">Tax-Exempt</label>
+        <Dropdown value={this.state.tax_exempt} options={this.state.planYesNo} onChange={(e) => { this.onTaxExemptValueChange(e.target.value); }} placeholder='Select Yes or No'/>
+    </div>
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="lastname6">Design</label>
+        <Dropdown value={this.state.design} options={this.state.planYesNo} onChange={(e) => { this.onDesignValueChange(e.target.value); }} placeholder='Select Yes or No'/>
+    </div>
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="firstnames6">Assigned Ink Tank Team Member</label>
+        <Dropdown  value={this.state.team_member} options={this.state.planTeamMember} onChange={(e) => {this.onTeamMemberValueChange(e.target.value);}} placeholder='Select Team Member'/>
 
     </div>
     <div className="p-field p-col-12 p-md-4">
         <label htmlFor="firstname6">Quantity</label>
-        <InputText value={this.state.quantity} id="quantity" type="text" onChange={(e) => { this.onQuantityValueChange(e.target.value); }} />
+        <InputText value={this.state.quantity} id="quantity" type="text" onChange={(e) => { this.onQuantityValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-4">
         <label htmlFor="lastname6">Order Quote</label>
-        <InputText value={this.state.order_quote} id="order_quote" type="text" onChange={(e) => { this.onOrderQuoteValueChange(e.target.value); }} placeholder='Type Order Quote or "NA"'/>
+        <InputText value={this.state.order_quote} id="order_quote" type="text" onChange={(e) => { this.onOrderQuoteValueChange(e.target.value); }}/>
     </div>
     <div className="p-field p-col-12 p-md-4">
         <label htmlFor="firstname6">Final Total</label>
-        <InputText value={this.state.final_total} id="final_total" type="text" onChange={(e) => { this.onFinalTotalValueChange(e.target.value); }} placeholder='Type Final Total or "NA"' />
+        <InputText value={this.state.final_total} id="final_total" type="text" onChange={(e) => { this.onFinalTotalValueChange(e.target.value); }} />
     </div>
+    
+    
     <div className = "p-field p-col-12">
-    <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} label="ADD CUSTOMER" onClick={() => {this.addCustomer()}} />
+    <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} label="ADD ORDER" onClick={() => {this.addBulkOrder()}} />
     </div>
     <div className = "p-field p-col-12">
     <Messages ref={(el) => this.messages = el}></Messages>
