@@ -304,7 +304,7 @@ export class AddOrders extends Component {
             const design = this.state.design
             const blank = this.state.blank
             const quantity = this.state.quantity
-            const ship_address = this.state.newaddress + this.state.newcity + this.state.newstate + this.state.newpostal_code
+            const ship_address = this.state.newaddress + ' ' + this.state.newcity + ' ' + this.state.newstate + ' ' + this.state.newpostalcode
             const final_total = this.state.final_total
             const order_quote = this.state.order_quote
             const team_member = this.state.team_member
