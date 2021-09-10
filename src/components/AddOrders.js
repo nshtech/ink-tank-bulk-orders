@@ -117,58 +117,58 @@ export class AddOrders extends Component {
 
         if (this.state.newaddress && this.state.newcity && this.state.newstate && this.state.newpostalcode) {
             newbulkorder.ship_address = this.state.newaddress+this.state.newcity+this.state.newstate+this.state.newpostalcode;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/ship_address').set(newbulkorder.ship_address);
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/ship_address').set(newbulkorder.ship_address);
         }
 
         if (this.state.blank) {
             newbulkorder.blank = this.state.blank;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/blank').set(newbulkorder.blank);
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/blank').set(newbulkorder.blank);
        }
         if (this.state.quantity) {
             newbulkorder.quantity = this.state.quantity;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/quantity').set(newbulkorder.quantity);
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/quantity').set(newbulkorder.quantity);
         }
         if (this.state.phone) {
             newbulkorder.phone = this.state.phone;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/phone').set(newbulkorder.phone);
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/phone').set(newbulkorder.phone);
         }
         if (this.state.email) {
             newbulkorder.email = this.state.email;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/email').set(newbulkorder.email)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/email').set(newbulkorder.email)
         }
         if (this.state.organization) {
             newbulkorder.organization = this.state.organization;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/organization').set(newbulkorder.organization)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/organization').set(newbulkorder.organization)
         }
         if (this.state.order_quote) {
             newbulkorder.order_quote = this.state.order_quote;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/order_quote').set(newbulkorder.order_quote)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/order_quote').set(newbulkorder.order_quote)
         }
         if (this.state.final_total) {
             newbulkorder.final_total = this.state.final_total;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/final_total').set(newbulkorder.final_total)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/final_total').set(newbulkorder.final_total)
         }
         if (this.state.tax_exempt) {
             newbulkorder.tax_exempt = this.state.tax_exempt;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/tax_exempt').set(newbulkorder.tax_exempt)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/tax_exempt').set(newbulkorder.tax_exempt)
         }
         if (this.state.team_member) {
             newbulkorder.order_quote = this.state.team_member;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/team_member').set(newbulkorder.team_member)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/team_member').set(newbulkorder.team_member)
         }
         if (this.state.design) {
             newbulkorder.design = this.state.design;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/design').set(newbulkorder.design)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/design').set(newbulkorder.design)
         }
         if (this.state.name) {
             newbulkorder.name = this.state.name;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/name').set(newbulkorder.name)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/name').set(newbulkorder.name)
         }
 
         let count = 0;
         let individual=null;
         allbulkorders.map(each => {
-            if (newbulkorder.id == each.id) {
+            if (newbulkorder.order_id == each.order_id) {
                 individual = {...allbulkorders[count]};
                 individual= newbulkorder;
                 allbulkorders[count] = individual;
@@ -278,11 +278,11 @@ export class AddOrders extends Component {
             
             var idNum = this.padId(this.state.idcount);
             // var id = this.state.newfirstname.substring(0,1).toLowerCase() +this.state.newlastname.substring(0,1).toLowerCase()+idNum;
-            var id = this.state.idcount;
-            //console.log('NEW ID: ', id);
+            var order_id = this.state.idcount;
+            //console.log('NEW ID: ', order_id);
             this.messages.show({severity: 'success', summary: 'Success', detail: 'Order Added!'});
             const db = firebase.database().ref()
-            //updating id count in firebase and then updating state variable
+            //updating order_id count in firebase and then updating state variable
             db.child('/idcount').set(this.state.idcount+1);
             db.child('/idcount').once('value')
                 .then(snapshot => {
@@ -304,24 +304,25 @@ export class AddOrders extends Component {
             const order_quote = this.state.order_quote
             const team_member = this.state.team_member
             const tax_exempt = this.state.tax_exempt
-            db.child('/bulk_orders/'+id).once("value")
+            db.child('/bulk_orders/'+order_id).once("value")
                 .then(snapshot => {
                     if(!snapshot.val()) {
-                        db.child('/bulk_orders/'+id+'/status').set("Yes");
-                        db.child('/bulk_orders/'+id+'/email').set(email);
-                        db.child('/bulk_orders/'+id+'/id').set(id);
-                        db.child('/bulk_orders/'+id+'/last_status_updated').set('N/A');
-                        db.child('/bulk_orders/'+id+'/name').set(name);
-                        db.child('/bulk_orders/'+id+'/phone').set(phone);
-                        db.child('/bulk_orders/'+id+'/organization').set(organization);
-                        db.child('/bulk_orders/'+id+'/design').set(design);
-                        db.child('/bulk_orders/'+id+'/blank').set(blank);
-                        db.child('/bulk_orders/'+id+'/ship_address').set(ship_address);
-                        db.child('/bulk_orders/'+id+'/final_total').set(final_total);
-                        db.child('/bulk_orders/'+id+'/order_quote').set(order_quote);
-                        db.child('/bulk_orders/'+id+'/team_member').set(team_member);
-                        db.child('/bulk_orders/'+id+'/quantity').set(quantity);
-                        db.child('/bulk_orders/'+id+'/tax_exempt').set(tax_exempt);
+                        db.child('/bulk_orders/'+order_id+'/active').set("Yes");
+                        db.child('/bulk_orders/'+order_id+'/status').set("Quote");
+                        db.child('/bulk_orders/'+order_id+'/email').set(email);
+                        db.child('/bulk_orders/'+order_id+'/order_id').set(order_id);
+                        db.child('/bulk_orders/'+order_id+'/last_status_updated').set('N/A');
+                        db.child('/bulk_orders/'+order_id+'/name').set(name);
+                        db.child('/bulk_orders/'+order_id+'/phone').set(phone);
+                        db.child('/bulk_orders/'+order_id+'/organization').set(organization);
+                        db.child('/bulk_orders/'+order_id+'/design').set(design);
+                        db.child('/bulk_orders/'+order_id+'/blank').set(blank);
+                        db.child('/bulk_orders/'+order_id+'/ship_address').set(ship_address);
+                        db.child('/bulk_orders/'+order_id+'/final_total').set(final_total);
+                        db.child('/bulk_orders/'+order_id+'/order_quote').set(order_quote);
+                        db.child('/bulk_orders/'+order_id+'/team_member').set(team_member);
+                        db.child('/bulk_orders/'+order_id+'/quantity').set(quantity);
+                        db.child('/bulk_orders/'+order_id+'/tax_exempt').set(tax_exempt);
 
                     }
                 })

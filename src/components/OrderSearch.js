@@ -145,8 +145,8 @@ export class OrderSearch extends Component {
             firebase.database().ref('/bulk_orders/' + bulk_order.id + '/email').set(newbulk_order.email)
         }
         if (this.state.newactive) {
-            newbulk_order.activestatus = this.state.newactive;
-            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/activestatus').set(newbulk_order.activestatus)
+            newbulk_order.active = this.state.newactive;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/active').set(newbulk_order.active)
         }
         let count = 0;
         let individual=null;
@@ -276,7 +276,7 @@ export class OrderSearch extends Component {
                             <Column field="organization" header="Organization" sortable filter filterPlaceholder="Search name" />
                         </DataTable>
                     </div>
-                    <div className="card card-list">  <p className={bulk_order.activestatus} style={{ marginRight: 15 }}>Active: {bulk_order.activestatus}</p>
+                    <div className="card card-list">  <p className={bulk_order.active} style={{ marginRight: 15 }}>Active: {bulk_order.active}</p>
                         <h1>{bulk_order.name}</h1>
                         <div style={{ display: 'flex' }}>
                             <div style={{ minWidth: '50%'  }}>
