@@ -118,6 +118,9 @@ export class OrderTracker extends Component {
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/quantity').set(props.rowData.quantity);
                 }
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/date').set(currDate+' '+ currTime);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/blank').set(props.rowData.blank);
@@ -125,6 +128,9 @@ export class OrderTracker extends Component {
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/quantity').set(props.rowData.quantity);
 
             })
         firebase.database().ref('/history/' + props.rowData.order_id + '/last_quote_updated').set(currDate + ' ' + currTime)
@@ -177,12 +183,18 @@ export class OrderTracker extends Component {
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
                             }
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
 
                         })
 
@@ -255,12 +267,18 @@ export class OrderTracker extends Component {
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
                             }
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
 
                         })
 
