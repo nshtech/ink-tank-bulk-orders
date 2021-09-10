@@ -221,6 +221,85 @@ export class OrderTracker extends Component {
         return currentorder
     }
 
+    teammemberEditor(allorders, currentorder, newteammember) {
+        let updatedOrders = [...allorders];
+        const db = firebase.database().ref()
+        var currDay = new Date().getDate();
+        var currMonth = new Date().getMonth() +1;
+        if (currMonth < 10) {
+            currMonth = '0'+currMonth
+        }
+        if (currDay < 10) {
+            currDay = '0' + currDay
+        }
+        var currYear = new Date().getFullYear();
+        var currDate = currYear + '-' + currMonth + '-'+currDay;
+        //var currDate = new Date().toDateString();
+        var currTime = new Date().toLocaleTimeString('it-IT');
+
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
+            });
+            updatedOrders.map(each => {
+                if (ids.includes(each.order_id)) {
+                    each.team_member = newteammember;
+                    firebase.database().ref('/bulk_orders/' + each.order_id + '/last_status_updated').set(currDate + ' ' + currTime)
+
+                    db.child('/history/' + currDate + each.order_id).once("value")
+                        .then(snapshot => {
+                            if (!snapshot.val()) { 
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id).set(0)
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/blank').set(each.blank);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                            }
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+
+                        })
+
+                }
+            })
+            this.setState({ bulk_orders: updatedOrders });
+        }
+        console.log('bagStatusEditor currentorder: ',currentorder);
+        this.dothisfirst(currentorder, newteammember)
+
+    }
+
+
+    dothisfirst(currentorder, newteammember) {
+        console.log('currentorder: ',currentorder);
+        console.log('newteammember: ',newteammember);
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
+            });
+            console.log('ids: ',ids);
+            var query = firebase.database().ref("bulk_orders").orderByKey();
+            query.once("value")
+                .then(function (snapshot) {
+                    snapshot.forEach(function (childSnapshot) {
+                        var key = childSnapshot.key;
+                        if (ids.includes(key)) {
+                            var key = childSnapshot.key;
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "status").set(newteammember);
+                            console.log('currentorder in forEach: ',currentorder);
+
+                        }
+                    });
+                });
+        }
+        return currentorder
+    }
+
+
 
     displaySelection(data) {
         if (this.state.editing && (!data || data.length === 0)) {
@@ -369,6 +448,19 @@ export class OrderTracker extends Component {
 
                 </div>
                 <div>
+                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Caden Gaviria" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Caden Gaviria')}}>
+                    </Button>
+                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Philippe Manzone" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Philippe Manzone') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Alec Aragon" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Alec Aragon') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shannon Groves" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Shannon Groves') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Ali Kilic" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Ali Kilic') }}>
+                    </Button>
+
+                </div>
+                <div>
 
                 </div>
             </div>;
@@ -391,9 +483,10 @@ export class OrderTracker extends Component {
                             <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
-                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false} editor={this.generalEditor}/>
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
                             {/* <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
                             <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} /> 
                             <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter} />
@@ -430,6 +523,7 @@ export class OrderTracker extends Component {
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
+                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             {/* <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
                             <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  />
                             <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />

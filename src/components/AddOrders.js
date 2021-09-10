@@ -250,15 +250,17 @@ export class AddOrders extends Component {
         // console.log('new res hall: ', this.state.newreshall);
         // console.log('new phone: ', this.state.newphone);
         // console.log('new email: ', this.state.newemail);
+        
         //this.setState({idcount: this.state.idcount+1});
-        //console.log('updated id Count', this.state.idcount);
-        if(this.state.newfirstname !=='' && this.state.newlastname !== '' && this.state.newemail !=='' && this.state.newphone !== '' && this.state.newreshall!=='' && this.state.newmax!=='' && this.state.newplanyear!==null && this.state.newplanquarter !== null) {
+
+        console.log('updated id Count', this.state.idcount);
+        if(this.state.name !=='' && this.state.organization !== '' && this.state.email !=='' && this.state.phone !== '' && this.state.blank!=='' && this.state.design!=='' && this.state.team_member!==null && this.state.tax_exempt !== null && this.state.quantity !== null && this.state.order_quote !== null && this.state.final_total !== null) {
             
             var idNum = this.padId(this.state.idcount);
             // var id = this.state.newfirstname.substring(0,1).toLowerCase() +this.state.newlastname.substring(0,1).toLowerCase()+idNum;
-            var id = this.state.newid;
-            //console.log('NEW ID: ', id);
-            this.messages.show({severity: 'success', summary: 'Success', detail: 'Customer Added!'});
+            var id = this.state.idcount;
+            console.log('NEW ID: ', id);
+            this.messages.show({severity: 'success', summary: 'Success', detail: 'Order Added!'});
             const db = firebase.database().ref()
             //updating id count in firebase and then updating state variable
             db.child('/idcount').set(this.state.idcount+1);
@@ -320,32 +322,6 @@ export class AddOrders extends Component {
 
     }
 
-    displayPlanQuarters(customerPlan) {
-        if (customerPlan) {
-
-            if (customerPlan === 'F') {
-                const result = 'Fall Quarter';
-                return result;
-            }
-            else if (customerPlan === 'W') {
-                const result = 'Winter Quarter' ;
-                return result;
-            }
-            else if (customerPlan === 'S') {
-                const result = 'Spring Quarter' ;
-                return result;
-            }
-            else if (customerPlan === 'W-S') {
-                const result = 'Winter/Spring Quarter' ;
-                return result;
-            }
-            else if (customerPlan === 'F-W-S') {
-                const result = 'Full Year' ;
-                return result;
-            }
-        }
-    }
-
 
 
     /* --------------- Filters ---------------- */
@@ -364,7 +340,7 @@ export class AddOrders extends Component {
             });
         });
         this.setState({ orders: orderArray });
-        //var idNum = 0;
+        var idNum = 0;
         firebase.database().ref('/idcount').once('value')
             .then(snapshot => {
                 this.setState({idcount: snapshot.val()})
@@ -372,8 +348,8 @@ export class AddOrders extends Component {
                 //idNum = snapshot.val();
                 console.log('id from firebase: ', snapshot.val());
             });
-        //console.log('var idNum: ', idNum);
-        //this.setState({idcount: idNum});
+        console.log('var idNum: ', idNum);
+        this.setState({idcount: idNum});
     }
 
     render() {
@@ -429,9 +405,17 @@ export class AddOrders extends Component {
         <Dropdown  value={this.state.newmax} options={this.state.planSelectWeight} onChange={(e) => {this.onMaxweightValueChange(e.target.value);}} placeholder='Select Weight'/>
 
     </div>
-    <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="state">Residence Hall</label>
-        <Dropdown  value={this.state.newreshall} options={this.state.planSelectReshall} onChange={(e) => {this.onReshallValueChange(e.target.value);}} placeholder='Select Residence Hall'/>
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="firstname6">Quantity</label>
+        <InputText value={this.state.quantity} id="quantity" type="text" onChange={(e) => { this.onQuantityValueChange(e.target.value); }} />
+    </div>
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="lastname6">Order Quote</label>
+        <InputText value={this.state.order_quote} id="order_quote" type="text" onChange={(e) => { this.onOrderQuoteValueChange(e.target.value); }} placeholder='Type Order Quote or "NA"'/>
+    </div>
+    <div className="p-field p-col-12 p-md-4">
+        <label htmlFor="firstname6">Final Total</label>
+        <InputText value={this.state.final_total} id="final_total" type="text" onChange={(e) => { this.onFinalTotalValueChange(e.target.value); }} placeholder='Type Final Total or "NA"' />
     </div>
     <div className = "p-field p-col-12">
     <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} label="ADD CUSTOMER" onClick={() => {this.addCustomer()}} />
