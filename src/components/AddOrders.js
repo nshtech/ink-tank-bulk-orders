@@ -215,14 +215,14 @@ export class AddOrders extends Component {
         this.setState({ final_total: value });
     }
     onPhoneValueChange(value) {
-        // if (value == "NA") {
-        //     this.setState({ phone: "NA"})
-        // }else{
-        //     if(value[3] ==='-' && value[7]==='-' && value.length===12) {
-        //         this.setState({ phone: value });
-        //     }
-        // }
-        this.setState({ phone: value });
+        if (value == "NA") {
+            this.setState({ phone: "NA"})
+        }else{
+            if(value[3] ==='-' && value[7]==='-' && value.length===12) {
+                this.setState({ phone: value });
+            }
+        }
+        //this.setState({ phone: value });
         // if value == NA: set to NA; conver to uppercase
         // else; cast as float
         

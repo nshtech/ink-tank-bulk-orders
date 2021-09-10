@@ -65,7 +65,7 @@ export class CustomerSheet extends Component {
     }
 
     activeBodyTemplate(rowData) {
-        return <span className={rowData.activestatus}>{rowData.activestatus}</span>;
+        return <span className={rowData.active}>{rowData.active}</span>;
     }
 
     detergentBodyTemplate(rowData){
@@ -104,7 +104,7 @@ export class CustomerSheet extends Component {
         const customerArray = [];
         firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                if (childSnapshot.val().active === 'True') {
+                if (childSnapshot.val().active === 'Yes' || childSnapshot.val().active === 'True') {
                     customerArray.push(childSnapshot.toJSON());
                 }
             });
