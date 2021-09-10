@@ -269,12 +269,12 @@ export class OrderTracker extends Component {
             this.setState({ bulk_orders: updatedOrders });
         }
         console.log('bagStatusEditor currentorder: ',currentorder);
-        this.dothisfirst(currentorder, newteammember)
+        this.dothisfirst_teammember(currentorder, newteammember)
 
     }
 
 
-    dothisfirst(currentorder, newteammember) {
+    dothisfirst_teammember(currentorder, newteammember) {
         console.log('currentorder: ',currentorder);
         console.log('newteammember: ',newteammember);
         if (currentorder) {
@@ -289,7 +289,7 @@ export class OrderTracker extends Component {
                         var key = childSnapshot.key;
                         if (ids.includes(key)) {
                             var key = childSnapshot.key;
-                            firebase.database().ref('/bulk_orders/' + key + '/' + "status").set(newteammember);
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "team_member").set(newteammember);
                             console.log('currentorder in forEach: ',currentorder);
 
                         }
