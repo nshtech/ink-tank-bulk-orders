@@ -56,44 +56,6 @@ export class OrderTracker extends Component {
         this.setState({ editing: false });
     }
 
-
-    // updateWeightStatus(props,value, currDate) {
-
-    //     console.log(this.state.customers[props.rowIndex])
-    //     // console.log(props.rowIndex)
-
-    //     //if (value > props.rowData.maxweight) {
-        
-    //     //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
-    //     console.log('value: ',value);
-    //     console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
-    //     if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
-    //         let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
-    //         console.log('marking as overweight.');
-    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
-    //         /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
-    //         temp.once('value', (snapshot) => {
-    //             let total = snapshot.val()+over
-    //             firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
-    //         })*/
-    //         let updatedCustomers = this.state.customers;
-    //         updatedCustomers[props.rowIndex][props.field] = value;
-    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
-    //         //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
-    //         // this.setState({ customers: updatedCustomers });
-    //         return value
-    //     }
-    //     else {
-    //         console.log('marking as underweight');
-    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
-    //         let updatedCustomers = this.state.customers;
-    //         updatedCustomers[props.rowIndex][props.field] = value;
-    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
-    //         // this.setState({ customers: updatedCustomers });
-    //         return value
-    //     }
-    // }
-
     async onEditorValueChange(props, value) {
 
         firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
@@ -359,10 +321,6 @@ export class OrderTracker extends Component {
         );
     }
 
-    // weightBodyTemplate(rowData) {
-    //     return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
-    // }
-
 
     onStatusFilterChange(event) {
         this.dt.filter(event.value, 'status', 'equals');
@@ -404,11 +362,6 @@ export class OrderTracker extends Component {
         this.dt.filter(event.value, 'team_member', 'equals');
         this.setState({ selectedTeamMember: event.value });
     }
-
-
-
-
-
 
     loadInitialState = async () => {
         const customerArray = [];
@@ -505,12 +458,6 @@ export class OrderTracker extends Component {
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
                             <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
                             <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
-                            {/* <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
-                            <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} /> 
-                            <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter} />
-                            <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
-
-                            <Column field="weekweight" header="Bag Weight" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/> */}
                         </DataTable>
                     </div>
                 </div>
@@ -542,10 +489,6 @@ export class OrderTracker extends Component {
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-                            {/* <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
-                            <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  />
-                            <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
-                            <Column field="weekweight" header="Bag Weight" style={{ maxWidth: 100 }} sortable={true} /> */}
 
                         </DataTable>
                     </div>

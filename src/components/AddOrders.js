@@ -70,17 +70,14 @@ export class AddOrders extends Component {
                 { label: 'Quote', value: 'quote' }
             ],
             planYesNo: [
-                {label: 'Yes', value: 'yes'},
-                {label: 'No', value: 'no'}
+                {label: 'Yes', value: 'Yes'},
+                {label: 'No', value: 'No'}
             ]
 
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
         this.onTeamMemberValueChange = this.onTeamMemberValueChange.bind(this)
-        //this.onPlanQuarterValueChange = this.onPlanQuarterValueChange.bind(this)
-        //this.getCustomerHistory = this.getCustomerHistory.bind(this)
-        //this.displayPlanQuarters = this.displayPlanQuarters.bind(this)
         this.resetNewInfo = this.resetNewInfo.bind(this)
         this.addBulkOrder = this.addBulkOrder.bind(this)
         this.padId = this.padId.bind(this)
@@ -120,8 +117,6 @@ export class AddOrders extends Component {
 
         if (this.state.newaddress && this.state.newcity && this.state.newstate && this.state.newpostalcode) {
             newbulkorder.ship_address = this.state.newaddress+this.state.newcity+this.state.newstate+this.state.newpostalcode;
-            //console.log('newplanQuarter: ', this.state.newplanQuarter);
-            //console.log('newplanYear', this.state.newplanYear)
             firebase.database().ref('/bulk_orders/' + bulk_order.id + '/ship_address').set(newbulkorder.ship_address);
         }
 
@@ -308,6 +303,7 @@ export class AddOrders extends Component {
             const final_total = this.state.final_total
             const order_quote = this.state.order_quote
             const team_member = this.state.team_member
+            const tax_exempt = this.state.tax_exempt
             db.child('/bulk_orders/'+id).once("value")
                 .then(snapshot => {
                     if(!snapshot.val()) {
@@ -325,6 +321,7 @@ export class AddOrders extends Component {
                         db.child('/bulk_orders/'+id+'/order_quote').set(order_quote);
                         db.child('/bulk_orders/'+id+'/team_member').set(team_member);
                         db.child('/bulk_orders/'+id+'/quantity').set(quantity);
+                        db.child('/bulk_orders/'+id+'/tax_exempt').set(tax_exempt);
 
                     }
                 })
@@ -339,6 +336,7 @@ export class AddOrders extends Component {
             this.setState({ order_quote: '' });
             this.setState({ team_member: '' });
             this.setState({ quantity: '' });
+            this.setState({ tax_exempt: '' });
             //const curr  = await this.resetNewInfo();
        
             //console.log('reset info: ', this.state.newfirstname);
@@ -349,34 +347,6 @@ export class AddOrders extends Component {
         }
 
     }
-
-    // displayPlanQuarters(customerPlan) {
-    //     if (customerPlan) {
-
-    //         if (customerPlan === 'F') {
-    //             const result = 'Fall Quarter';
-    //             return result;
-    //         }
-    //         else if (customerPlan === 'W') {
-    //             const result = 'Winter Quarter' ;
-    //             return result;
-    //         }
-    //         else if (customerPlan === 'S') {
-    //             const result = 'Spring Quarter' ;
-    //             return result;
-    //         }
-    //         else if (customerPlan === 'W-S') {
-    //             const result = 'Winter/Spring Quarter' ;
-    //             return result;
-    //         }
-    //         else if (customerPlan === 'F-W-S') {
-    //             const result = 'Full Year' ;
-    //             return result;
-    //         }
-    //     }
-    // }
-
-
 
     /* --------------- Filters ---------------- */
     componentDidMount() {
