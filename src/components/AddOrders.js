@@ -6,9 +6,9 @@ import { Column } from 'primereact/column'
 import { Chart } from 'primereact/chart'
 import { InputText } from 'primereact/inputtext';
 import { Editor } from 'primereact/editor';
-import {InputTextarea} from 'primereact/inputtextarea';
-import {Messages} from 'primereact/messages';
-import {Message} from 'primereact/message';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Messages } from 'primereact/messages';
+import { Message } from 'primereact/message';
 
 import firebase from 'firebase/app';
 import 'firebase/database';
@@ -49,18 +49,18 @@ export class AddOrders extends Component {
             newstate: null,
             newpostalcode: null,
             planSelectYear: [
-                {label: '2020-2021', value: '2020-2021'},
-                {label: '2021-2022', value: '2021-2022'},
-                {label: '2022-2023', value: '2022-2023'},
-                {label: '2023-2024', value: '2023-2024'}
+                { label: '2020-2021', value: '2020-2021' },
+                { label: '2021-2022', value: '2021-2022' },
+                { label: '2022-2023', value: '2022-2023' },
+                { label: '2023-2024', value: '2023-2024' }
             ],
             planTeamMember: [
                 { label: 'Caden Gaviria', value: 'Caden Gaviria' },
-                { label: 'Philippe Manzone', value: 'Philippe Manzone'},
-                { label: 'Alec Aragon', value: 'Alec Aragon'},
-                { label: 'Shannon Groves', value: 'Shannon Groves'},
-                { label: 'Ali Kilic', value: 'Ali Kilic'}
-        ],
+                { label: 'Philippe Manzone', value: 'Philippe Manzone' },
+                { label: 'Alec Aragon', value: 'Alec Aragon' },
+                { label: 'Shannon Groves', value: 'Shannon Groves' },
+                { label: 'Ali Kilic', value: 'Ali Kilic' }
+            ],
             planSelectStatus: [
                 { label: 'Confirmed', value: 'confirmed' },
                 { label: 'In Production', value: 'in production' },
@@ -70,8 +70,8 @@ export class AddOrders extends Component {
                 { label: 'Quote', value: 'quote' }
             ],
             planYesNo: [
-                {label: 'Yes', value: 'Yes'},
-                {label: 'No', value: 'No'}
+                { label: 'Yes', value: 'Yes' },
+                { label: 'No', value: 'No' }
             ]
 
         };
@@ -87,16 +87,16 @@ export class AddOrders extends Component {
     padId(idNum) {
         var digitLength = (idNum.toString()).length;
         if (digitLength === 1) {
-            var result = '0000'+idNum;
+            var result = '0000' + idNum;
         }
         else if (digitLength === 2) {
-            var result = '000'+idNum;
+            var result = '000' + idNum;
         }
         else if (digitLength === 3) {
-            var result = '00'+idNum;
+            var result = '00' + idNum;
         }
         else if (digitLength === 4) {
-            var result = '0'+idNum;
+            var result = '0' + idNum;
         }
         else if (digitLength === 5) {
             var result = idNum.toString();
@@ -113,17 +113,17 @@ export class AddOrders extends Component {
         this.setState({ editing: false });
         //console.log(this.state.newplan)
         let allbulkorders = [...this.state.bulk_orders];
-        let newbulkorder = {...this.state.selectedOrders};
+        let newbulkorder = { ...this.state.selectedOrders };
 
         if (this.state.newaddress && this.state.newcity && this.state.newstate && this.state.newpostalcode) {
-            newbulkorder.ship_address = this.state.newaddress+this.state.newcity+this.state.newstate+this.state.newpostalcode;
+            newbulkorder.ship_address = this.state.newaddress + this.state.newcity + this.state.newstate + this.state.newpostalcode;
             firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/ship_address').set(newbulkorder.ship_address);
         }
 
         if (this.state.blank) {
             newbulkorder.blank = this.state.blank;
             firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/blank').set(newbulkorder.blank);
-       }
+        }
         if (this.state.quantity) {
             newbulkorder.quantity = this.state.quantity;
             firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/quantity').set(newbulkorder.quantity);
@@ -163,28 +163,29 @@ export class AddOrders extends Component {
         if (this.state.name) {
             newbulkorder.name = this.state.name;
             firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/name').set(newbulkorder.name)
+            firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/status').set('invoiced')
         }
 
         let count = 0;
-        let individual=null;
+        let individual = null;
         allbulkorders.map(each => {
             if (newbulkorder.order_id == each.order_id) {
-                individual = {...allbulkorders[count]};
-                individual= newbulkorder;
+                individual = { ...allbulkorders[count] };
+                individual = newbulkorder;
                 allbulkorders[count] = individual;
             }
-            count = count+1
+            count = count + 1
         })
         this.setState({ bulk_orders: allbulkorders });
-        this.setState({selectedOrders: newbulkorder});
-        
+        this.setState({ selectedOrders: newbulkorder });
+
     }
 
     //CUSTOMER INFORMATION EDITING
     onNameValueChange(value) {
         //console.log('new first name: ', value)
-        this.setState({name: value});
-        
+        this.setState({ name: value });
+
     }
 
     onTeamMemberValueChange(value) {
@@ -205,27 +206,42 @@ export class AddOrders extends Component {
         this.setState({ tax_exempt: value });
     }
     onQuantityValueChange(value) {
-        this.setState({ quantity: value });
+        if (value.toUpperCase() === "NA" || value.toUpperCase() === "N/A") {
+            this.setState({ quantity: "NA" })
+        }
+        else {
+            this.setState({ quantity: value });
+        }
     }
     onOrderQuoteValueChange(value) {
         //try, execept 
-        this.setState({ order_quote: value });
+        if (value.toUpperCase() === "NA" || value.toUpperCase() === "N/A") {
+            this.setState({ order_quote: "NA" })
+        }
+        else {
+            this.setState({ order_quote: value });
+        }
     }
     onFinalTotalValueChange(value) {
-        this.setState({ final_total: value });
+        if (value.toUpperCase() === "NA" || value.toUpperCase() === "N/A") {
+            this.setState({ final_total: "NA" })
+        }
+        else {
+            this.setState({ final_total: value });
+        }
     }
     onPhoneValueChange(value) {
-        if (value == "NA") {
-            this.setState({ phone: "NA"})
-        }else{
-            if(value[3] ==='-' && value[7]==='-' && value.length===12) {
+        if (value.toUpperCase() === "NA" || value.toUpperCase() === "N/A") {
+            this.setState({ phone: "NA" })
+        } else {
+            if (value[3] === '-' && value[7] === '-' && value.length === 12) {
                 this.setState({ phone: value });
             }
         }
         //this.setState({ phone: value });
         // if value == NA: set to NA; conver to uppercase
         // else; cast as float
-        
+
     }
     onEmailValueChange(value) {
         if (value.includes('@') && value.includes('.')) {
@@ -233,34 +249,33 @@ export class AddOrders extends Component {
         }
     }
     onAddressValueChange(value) {
-        this.setState({newaddress: value});  
+        this.setState({ newaddress: value });
     }
     onCityValueChange(value) {
-        this.setState({ newcity: value});  
+        this.setState({ newcity: value });
     }
     onStateValueChange(value) {
-        this.setState({ newstate: value});  
+        this.setState({ newstate: value });
     }
     onPostalCodeValueChange(value) {
-        this.setState({ newpostalcode: value});  
+        this.setState({ newpostalcode: value });
     }
     resetNewInfo() {
-        this.setState({name: ''});
-        this.setState({ team_member: ''});
+        this.setState({ name: '' });
+        this.setState({ team_member: '' });
         this.setState({ blank: '' });
         this.setState({ design: '' });
-        this.setState({ organization: ''});
+        this.setState({ organization: '' });
         this.setState({ tax_exempt: '' });
-        this.setState({ quantity: '' });
         this.setState({ quantity: '' });
         this.setState({ order_quote: '' });
         this.setState({ final_total: '' });
-        this.setState({ phone: ''});
-        this.setState({ email: ''});
-        this.setState({ newaddress: ''});
-        this.setState({ newstate: ''});
-        this.setState({ newcity: ''});
-        this.setState({ newpostalcode: ''});
+        this.setState({ phone: '' });
+        this.setState({ email: '' });
+        this.setState({ newaddress: '' });
+        this.setState({ newstate: '' });
+        this.setState({ newcity: '' });
+        this.setState({ newpostalcode: '' });
     }
 
     addBulkOrder() {
@@ -274,19 +289,19 @@ export class AddOrders extends Component {
         // console.log('new email: ', this.state.newemail);
         //this.setState({idcount: this.state.idcount+1});
         //console.log('updated id Count', this.state.idcount);
-        if(this.state.name !=='' && this.state.organization !== '' && this.state.email !=='' && this.state.phone !== '' && this.state.blank!=='' && this.state.design!=='' && this.state.team_member!==null && this.state.tax_exempt !== null && this.state.quantity !== null && this.state.order_quote !== null && this.state.final_total !== null) {
-            
+        if (this.state.name !== '' && this.state.organization !== '' && this.state.email !== '' && this.state.phone !== '' && this.state.blank !== '' && this.state.design !== '' && this.state.team_member !== null && this.state.tax_exempt !== null && this.state.quantity !== null && this.state.order_quote !== null && this.state.final_total !== null) {
+
             var idNum = this.padId(this.state.idcount);
             // var id = this.state.newfirstname.substring(0,1).toLowerCase() +this.state.newlastname.substring(0,1).toLowerCase()+idNum;
             var order_id = this.state.idcount;
             //console.log('NEW ID: ', order_id);
-            this.messages.show({severity: 'success', summary: 'Success', detail: 'Order Added!'});
+            this.messages.show({ severity: 'success', summary: 'Success', detail: 'Order Added!' });
             const db = firebase.database().ref()
             //updating order_id count in firebase and then updating state variable
-            db.child('/idcount').set(this.state.idcount+1);
+            db.child('/idcount').set(this.state.idcount + 1);
             db.child('/idcount').once('value')
                 .then(snapshot => {
-                    this.setState({idcount: snapshot.val()})
+                    this.setState({ idcount: snapshot.val() })
                     console.log('state var idcount: ', this.state.idcount);
                     //idNum = snapshot.val();
                     console.log('id from firebase: ', snapshot.val());
@@ -304,47 +319,51 @@ export class AddOrders extends Component {
             const order_quote = this.state.order_quote
             const team_member = this.state.team_member
             const tax_exempt = this.state.tax_exempt
-            db.child('/bulk_orders/'+order_id).once("value")
+            db.child('/bulk_orders/' + order_id).once("value")
                 .then(snapshot => {
-                    if(!snapshot.val()) {
-                        db.child('/bulk_orders/'+order_id+'/active').set("Yes");
-                        db.child('/bulk_orders/'+order_id+'/status').set("Quote");
-                        db.child('/bulk_orders/'+order_id+'/email').set(email);
-                        db.child('/bulk_orders/'+order_id+'/order_id').set(order_id);
-                        db.child('/bulk_orders/'+order_id+'/last_status_updated').set('N/A');
-                        db.child('/bulk_orders/'+order_id+'/name').set(name);
-                        db.child('/bulk_orders/'+order_id+'/phone').set(phone);
-                        db.child('/bulk_orders/'+order_id+'/organization').set(organization);
-                        db.child('/bulk_orders/'+order_id+'/design').set(design);
-                        db.child('/bulk_orders/'+order_id+'/blank').set(blank);
-                        db.child('/bulk_orders/'+order_id+'/ship_address').set(ship_address);
-                        db.child('/bulk_orders/'+order_id+'/final_total').set(final_total);
-                        db.child('/bulk_orders/'+order_id+'/order_quote').set(order_quote);
-                        db.child('/bulk_orders/'+order_id+'/team_member').set(team_member);
-                        db.child('/bulk_orders/'+order_id+'/quantity').set(quantity);
-                        db.child('/bulk_orders/'+order_id+'/tax_exempt').set(tax_exempt);
+                    if (!snapshot.val()) {
+                        db.child('/bulk_orders/' + order_id + '/active').set("Yes");
+                        db.child('/bulk_orders/' + order_id + '/status').set("invoiced");
+                        db.child('/bulk_orders/' + order_id + '/email').set(email);
+                        db.child('/bulk_orders/' + order_id + '/order_id').set(order_id.toString());
+                        db.child('/bulk_orders/' + order_id + '/last_status_updated').set('N/A');
+                        db.child('/bulk_orders/' + order_id + '/name').set(name);
+                        db.child('/bulk_orders/' + order_id + '/phone').set(phone);
+                        db.child('/bulk_orders/' + order_id + '/organization').set(organization);
+                        db.child('/bulk_orders/' + order_id + '/design').set(design);
+                        db.child('/bulk_orders/' + order_id + '/blank').set(blank);
+                        db.child('/bulk_orders/' + order_id + '/ship_address').set(ship_address);
+                        db.child('/bulk_orders/' + order_id + '/final_total').set(final_total);
+                        db.child('/bulk_orders/' + order_id + '/order_quote').set(order_quote);
+                        db.child('/bulk_orders/' + order_id + '/team_member').set(team_member);
+                        db.child('/bulk_orders/' + order_id + '/quantity').set(quantity);
+                        db.child('/bulk_orders/' + order_id + '/tax_exempt').set(tax_exempt);
 
                     }
                 })
-
-            this.setState({email: ''});
-            this.setState({phone: ''});
+                this.setState({ name: '' });
+            this.setState({ email: '' });
+            this.setState({ phone: '' });
             this.setState({ organization: '' });
-            this.setState({ design: ''});
+            this.setState({ design: '' });
             this.setState({ blank: '' });
             this.setState({ ship_address: '' });
+            this.setState({ address: '' });
+            this.setState({ city: '' });
+            this.setState({ state: '' });
+            this.setState({ postal_code: '' });
             this.setState({ final_total: '' });
             this.setState({ order_quote: '' });
             this.setState({ team_member: '' });
             this.setState({ quantity: '' });
             this.setState({ tax_exempt: '' });
             //const curr  = await this.resetNewInfo();
-       
+
             //console.log('reset info: ', this.state.newfirstname);
             //document.getElementById("form").reset();
         }
         else {
-            this.messages.show({severity: "error", summary: "Missing Fields", detail: "Please enter all information"});
+            this.messages.show({ severity: "error", summary: "Missing Fields", detail: "Please enter all information" });
         }
 
     }
@@ -369,104 +388,104 @@ export class AddOrders extends Component {
         var idNum = 0;
         firebase.database().ref('/idcount').once('value')
             .then(snapshot => {
-                this.setState({idcount: snapshot.val()})
+                this.setState({ idcount: snapshot.val() })
                 console.log('state var idcount: ', this.state.idcount);
                 idNum = snapshot.val();
                 console.log('id from firebase: ', snapshot.val());
             });
         //console.log('var idNum: ', idNum);
-        this.setState({idcount: idNum});
+        this.setState({ idcount: idNum });
     }
 
     render() {
-            var header = <div style={{ textAlign: 'left' }}></div>
-            var bulk_order = this.state.selectedOrders
-            //var history = this.getCustomerHistory(customer)
+        var header = <div style={{ textAlign: 'left' }}></div>
+        var bulk_order = this.state.selectedOrders
+        //var history = this.getCustomerHistory(customer)
 
-            return (
+        return (
             <div className="card" id="form">
                 <h1>Add New Order Inquiry</h1>
                 <p>Use this form to enter all information about a new order or order inquiry</p>
 
                 <div className="p-fluid p-formgrid p-grid">
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">Name</label>
-        <InputText value={this.state.name} id="firstname" type="text" onChange={(e) => { this.onNameValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="lastname6">Organization</label>
-        <InputText value={this.state.organization} id="lastname" type="text" onChange={(e) => { this.onOrganizationValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">Blank</label>
-        <InputText value={this.state.blank} id="blank" type="text" onChange={(e) => { this.onBlankValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-6">
-        <label htmlFor="firstname6">Email</label>
-        <InputText value={this.state.email} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-6">
-        <label htmlFor="firstname6">Phone</label>
-        <InputText value={this.state.phone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }} placeholder='Type Phone Number or "NA"'/>
-    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstname6">Name</label>
+                        <InputText value={this.state.name} id="firstname" type="text" onChange={(e) => { this.onNameValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="lastname6">Organization</label>
+                        <InputText value={this.state.organization} id="lastname" type="text" onChange={(e) => { this.onOrganizationValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstname6">Blank</label>
+                        <InputText value={this.state.blank} id="blank" type="text" onChange={(e) => { this.onBlankValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-6">
+                        <label htmlFor="firstname6">Email</label>
+                        <InputText value={this.state.email} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-6">
+                        <label htmlFor="firstname6">Phone</label>
+                        <InputText value={this.state.phone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }} placeholder='Type Phone Number or "NA"' />
+                    </div>
 
 
-    <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="address">Address</label>
-        <InputText value={this.state.address} id="newaddress" type="text" onChange={(e) => { this.onAddressValueChange(e.target.value); }}/>
+                    <div className="p-field p-col-12 p-md-3">
+                        <label htmlFor="address">Address</label>
+                        <InputText value={this.state.address} id="newaddress" type="text" onChange={(e) => { this.onAddressValueChange(e.target.value); }} />
 
-    </div>
-    <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="lastname6">City</label>
-        <InputText value={this.state.city} id="newaddress" type="text" onChange={(e) => { this.onCityValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="city">State</label>
-        <InputText value={this.state.state} id="newaddress" type="text" onChange={(e) => { this.onStateValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-3">
-        <label htmlFor="state">Postal Code</label>
-        <InputText value={this.state.postal_code} id="newaddress" type="text" onChange={(e) => { this.onPostalCodeValueChange(e.target.value); }}/>    </div>
-
-
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">Tax-Exempt</label>
-        <Dropdown value={this.state.tax_exempt} options={this.state.planYesNo} onChange={(e) => { this.onTaxExemptValueChange(e.target.value); }} placeholder='Select Yes or No'/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="lastname6">Design</label>
-        <Dropdown value={this.state.design} options={this.state.planYesNo} onChange={(e) => { this.onDesignValueChange(e.target.value); }} placeholder='Select Yes or No'/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstnames6">Assigned Ink Tank Team Member</label>
-        <Dropdown  value={this.state.team_member} options={this.state.planTeamMember} onChange={(e) => {this.onTeamMemberValueChange(e.target.value);}} placeholder='Select Team Member'/>
-
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">Quantity</label>
-        <InputText value={this.state.quantity} id="quantity" type="text" onChange={(e) => { this.onQuantityValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="lastname6">Order Quote</label>
-        <InputText value={this.state.order_quote} id="order_quote" type="text" onChange={(e) => { this.onOrderQuoteValueChange(e.target.value); }}/>
-    </div>
-    <div className="p-field p-col-12 p-md-4">
-        <label htmlFor="firstname6">Final Total</label>
-        <InputText value={this.state.final_total} id="final_total" type="text" onChange={(e) => { this.onFinalTotalValueChange(e.target.value); }} />
-    </div>
-    
-    
-    <div className = "p-field p-col-12">
-    <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} label="ADD ORDER" onClick={() => {this.addBulkOrder()}} />
-    </div>
-    <div className = "p-field p-col-12">
-    <Messages ref={(el) => this.messages = el}></Messages>
-    </div>
+                    </div>
+                    <div className="p-field p-col-12 p-md-3">
+                        <label htmlFor="lastname6">City</label>
+                        <InputText value={this.state.city} id="newaddress" type="text" onChange={(e) => { this.onCityValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-3">
+                        <label htmlFor="city">State</label>
+                        <InputText value={this.state.state} id="newaddress" type="text" onChange={(e) => { this.onStateValueChange(e.target.value); }} />
+                    </div>
+                    <div className="p-field p-col-12 p-md-3">
+                        <label htmlFor="state">Postal Code</label>
+                        <InputText value={this.state.postal_code} id="newaddress" type="text" onChange={(e) => { this.onPostalCodeValueChange(e.target.value); }} />    </div>
 
 
-</div>
-</div>
-            );
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstname6">Tax-Exempt</label>
+                        <Dropdown value={this.state.tax_exempt} options={this.state.planYesNo} onChange={(e) => { this.onTaxExemptValueChange(e.target.value); }} placeholder='Select Yes or No' />
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="lastname6">Design</label>
+                        <Dropdown value={this.state.design} options={this.state.planYesNo} onChange={(e) => { this.onDesignValueChange(e.target.value); }} placeholder='Select Yes or No' />
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstnames6">Assigned Ink Tank Team Member</label>
+                        <Dropdown value={this.state.team_member} options={this.state.planTeamMember} onChange={(e) => { this.onTeamMemberValueChange(e.target.value); }} placeholder='Select Team Member' />
+
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstname6">Quantity</label>
+                        <InputText value={this.state.quantity} id="quantity" type="text" onChange={(e) => { this.onQuantityValueChange(e.target.value); }} placeholder='Type Quantity or "NA"'/>
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="lastname6">Order Quote</label>
+                        <InputText value={this.state.order_quote} id="order_quote" type="text" onChange={(e) => { this.onOrderQuoteValueChange(e.target.value); }} placeholder='Type Order Quote or "NA"'/>
+                    </div>
+                    <div className="p-field p-col-12 p-md-4">
+                        <label htmlFor="firstname6">Final Total</label>
+                        <InputText value={this.state.final_total} id="final_total" type="text" onChange={(e) => { this.onFinalTotalValueChange(e.target.value); }} placeholder='Type Final Total or "NA"'/>
+                    </div>
+
+
+                    <div className="p-field p-col-12">
+                        <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} label="ADD ORDER" onClick={() => { this.addBulkOrder() }} />
+                    </div>
+                    <div className="p-field p-col-12">
+                        <Messages ref={(el) => this.messages = el}></Messages>
+                    </div>
+
+
+                </div>
+            </div>
+        );
 
 
 

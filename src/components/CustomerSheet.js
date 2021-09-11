@@ -104,7 +104,7 @@ export class CustomerSheet extends Component {
         const customerArray = [];
         firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                if (childSnapshot.val().active === 'Yes' || childSnapshot.val().active === 'True') {
+                if (childSnapshot.val().active.toLowerCase() === 'yes' || childSnapshot.val().active.toLowerCase() === 'true') {
                     customerArray.push(childSnapshot.toJSON());
                 }
             });
