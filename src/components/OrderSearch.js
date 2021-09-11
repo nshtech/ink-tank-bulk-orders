@@ -91,10 +91,10 @@ export class OrderSearch extends Component {
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
-        this.onPlanYearValueChange = this.onPlanYearValueChange.bind(this)
-        this.onPlanQuarterValueChange = this.onPlanQuarterValueChange.bind(this)
-        this.getCustomerHistory = this.getCustomerHistory.bind(this)
-        this.displayPlanQuarters = this.displayPlanQuarters.bind(this)
+        // this.onPlanYearValueChange = this.onPlanYearValueChange.bind(this)
+        // this.onPlanQuarterValueChange = this.onPlanQuarterValueChange.bind(this)
+        this.getBulkOrderHistory = this.getBulkOrderHistory.bind(this)
+        //this.displayPlanQuarters = this.displayPlanQuarters.bind(this)
         this.resetNewInfo = this.resetNewInfo.bind(this)
     }
 
@@ -103,63 +103,63 @@ export class OrderSearch extends Component {
         this.resetNewInfo();
     }
 
-    save(customer) {
+    save(bulk_order) {
         this.setState({ editing: false });
         //console.log(this.state.newplan)
-        let allcustomers = [...this.state.customers];
-        let newcustomer = {...this.state.selectedCustomer};
+        let allbulk_orders = [...this.state.bulk_orders];
+        let newbulk_order = {...this.state.selectedOrder};
         if (this.state.newplanYear && this.state.newplanQuarter) {
-             newcustomer.plan = this.state.newplanYear+this.state.newplanQuarter;
+             newbulk_order.plan = this.state.newplanYear+this.state.newplanQuarter;
              //console.log('newplanQuarter: ', this.state.newplanQuarter);
              //console.log('newplanYear', this.state.newplanYear)
-             firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
+             firebase.database().ref('/bulk_orders/' + bulk_order.id + '/plan').set(newbulk_order.plan);
         }
         else if (this.state.newplanYear) {
-            newcustomer.plan = this.state.newplanYear+customer.plan.substring(9);
-            //console.log('newcustomer.plan: ', newcustomer.plan);
+            newbulk_order.plan = this.state.newplanYear+bulk_order.plan.substring(9);
+            //console.log('newbulk_order.plan: ', newbulk_order.plan);
             //console.log('newplanYear', this.state.newplanYear)
-            //console.log('customer quarter: ', customer.plan.substring(9));
-            firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
+            //console.log('bulk_order quarter: ', bulk_order.plan.substring(9));
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/plan').set(newbulk_order.plan);
        }
        else if (this.state.newplanQuarter) {
-            newcustomer.plan = customer.plan.substring(0,9)+this.state.newplanQuarter;
-            //console.log('newcustomer.plan: ', newcustomer.plan);
-            //console.log('customer year', customer.plan.substring(0,9))
+            newbulk_order.plan = bulk_order.plan.substring(0,9)+this.state.newplanQuarter;
+            //console.log('newbulk_order.plan: ', newbulk_order.plan);
+            //console.log('bulk_order year', bulk_order.plan.substring(0,9))
             //console.log('newplanQuarter: ', this.state.newplanQuarter);
-            firebase.database().ref('/customers/' + customer.id + '/plan').set(newcustomer.plan);
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/plan').set(newbulk_order.plan);
    }
         if (this.state.newmax) {
-            newcustomer.maxweight = this.state.newmax;
-            firebase.database().ref('/customers/' + customer.id + '/maxweight').set(newcustomer.maxweight);
+            newbulk_order.maxweight = this.state.newmax;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/maxweight').set(newbulk_order.maxweight);
        }
         if (this.state.newreshall) {
-            newcustomer.reshall = this.state.newreshall;
-            firebase.database().ref('/customers/' + customer.id + '/reshall').set(newcustomer.reshall);
+            newbulk_order.reshall = this.state.newreshall;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/reshall').set(newbulk_order.reshall);
         }
         if (this.state.newphone) {
-            newcustomer.phone = this.state.newphone;
-            firebase.database().ref('/customers/' + customer.id + '/phone').set(newcustomer.phone);
+            newbulk_order.phone = this.state.newphone;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/phone').set(newbulk_order.phone);
         }
         if (this.state.newemail) {
-            newcustomer.email = this.state.newemail;
-            firebase.database().ref('/customers/' + customer.id + '/email').set(newcustomer.email)
+            newbulk_order.email = this.state.newemail;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/email').set(newbulk_order.email)
         }
         if (this.state.newactive) {
-            newcustomer.activestatus = this.state.newactive;
-            firebase.database().ref('/customers/' + customer.id + '/activestatus').set(newcustomer.activestatus)
+            newbulk_order.active = this.state.newactive;
+            firebase.database().ref('/bulk_orders/' + bulk_order.id + '/active').set(newbulk_order.active)
         }
         let count = 0;
         let individual=null;
-        allcustomers.map(each => {
-            if (newcustomer.id === each.id) {
-                individual = {...allcustomers[count]};
-                individual= newcustomer;
-                allcustomers[count] = individual;
+        allbulk_orders.map(each => {
+            if (newbulk_order.id === each.id) {
+                individual = {...allbulk_orders[count]};
+                individual= newbulk_order;
+                allbulk_orders[count] = individual;
             }
             count = count+1
         })
-        this.setState({ customers: allcustomers });
-        this.setState({selectedCustomer: newcustomer});
+        this.setState({ bulk_orders: allbulk_orders });
+        this.setState({selectedOrder: newbulk_order});
 
     }
 
@@ -194,14 +194,14 @@ export class OrderSearch extends Component {
 
     }
 
-    getCustomerHistory(customer) {
+    getBulkOrderHistory(bulk_order) {
         var history = []
         firebase.database().ref('/orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
                 var cid = childSnapshot.key;
                 var res = cid.split('-');
                 //console.log(res[1])
-                if (res[1] === customer.id) {
+                if (res[1] === bulk_order.id) {
                     history.push(childSnapshot.toJSON())
                 }
             });
@@ -210,27 +210,27 @@ export class OrderSearch extends Component {
         return history;
     }
 
-    displayPlanQuarters(customerPlan) {
-        if (customerPlan) {
+    // displayPlanQuarters(customerPlan) {
+    //     if (customerPlan) {
 
-            if (customerPlan === 'F') {
-                const result = 'Fall Quarter';
-                return result;
-            }
-            else if (customerPlan === 'W') {
-                const result = 'Winter Quarter' ;
-                return result;
-            }
-            else if (customerPlan === 'S') {
-                const result = 'Spring Quarter' ;
-                return result;
-            }
-            else if (customerPlan === 'F-W-S') {
-                const result = 'Full Year' ;
-                return result;
-            }
-        }
-    }
+    //         if (customerPlan === 'F') {
+    //             const result = 'Fall Quarter';
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'W') {
+    //             const result = 'Winter Quarter' ;
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'S') {
+    //             const result = 'Spring Quarter' ;
+    //             return result;
+    //         }
+    //         else if (customerPlan === 'F-W-S') {
+    //             const result = 'Full Year' ;
+    //             return result;
+    //         }
+    //     }
+    // }
 
     resetNewInfo() {
         this.setState({ newplanYear: null });
@@ -254,10 +254,10 @@ export class OrderSearch extends Component {
     }
 
     render() {
-        if (this.state.selectedCustomer) {
+        if (this.state.selectedOrder) {
             var header = <div style={{ textAlign: 'left' }}></div>
-            var customer = this.state.selectedCustomer
-            var history = this.getCustomerHistory(customer)
+            var bulk_order = this.state.selectedOrder
+            var history = this.getBulkOrderHistory(bulk_order)
             var laundryStatusDisplay = {
                 'picked-up': 'picked up',
                 'delivered-to-SH': 'delivered to SH',
@@ -270,29 +270,29 @@ export class OrderSearch extends Component {
                 <div style={{display: 'flex'}}>
                     <div className="card card-search">
                         <DataTable value={this.state.bulk_orders} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
-                            responsive={true} autoLayout={true} selection={this.state.selectedCustomer} onSelectionChange={e => this.setState({ selectedCustomer: e.value })}>
+                            responsive={true} autoLayout={true} selection={this.state.selectedOrder} onSelectionChange={e => this.setState({ selectedOrder: e.value })}>
                             <Column field="order_id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
                             <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
                             <Column field="organization" header="Organization" sortable filter filterPlaceholder="Search name" />
                         </DataTable>
                     </div>
-                    <div className="card card-list">  <p className={customer.active} style={{ marginRight: 15 }}>Active: {customer.active}</p>
-                        <h1>{customer.name}</h1>
+                    <div className="card card-list">  <p className={bulk_order.active} style={{ marginRight: 15 }}>Active: {bulk_order.active}</p>
+                        <h1>{bulk_order.name}</h1>
                         <div style={{ display: 'flex' }}>
                             <div style={{ minWidth: '50%'  }}>
                                 <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Account Information</h3>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Order ID: {customer.order_id}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Organization: {customer.organization}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Blank: {customer.blank}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Shipping Address: {customer.ship_address}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Design: {customer.design}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Tax Exempt: {customer.tax_exempt}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Order ID: {bulk_order.order_id}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Organization: {bulk_order.organization}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Blank: {bulk_order.blank}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Shipping Address: {bulk_order.ship_address}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Design: {bulk_order.design}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Tax Exempt: {bulk_order.tax_exempt}</p>
                             
                             </div>
                             <div style={{ minWidth: '50%' }}>
                                 <h3 style={{ marginBlockStart: 0, marginBlockEnd: '0.25em' }}>Contact Information</h3>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Email: {customer.email}</p>
-                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Phone: {customer.phone}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Email: {bulk_order.email}</p>
+                                <p style={{ marginBlockStart: 0, marginBlockEnd: '0.25em', paddingRight: 15 }}>Phone: {bulk_order.phone}</p>
                             </div>
                         </div>
                         <Button type="button" style={{ color: 'white', backgroundColor: '#6a09a4', borderColor: '#6a09a4', marginTop: 30 }} icon="pi pi-pencil" iconPos="left" label="EDIT" onClick={this.edit}>
@@ -312,7 +312,7 @@ export class OrderSearch extends Component {
                 <div style={{ display: 'flex' }}>
                     <div className="card card-search">
                         <DataTable value={this.state.bulk_orders} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} selectionMode="single"
-                        responsive={true} autoLayout={true} selection={this.state.selectedCustomer} onSelectionChange={e => this.setState({ selectedCustomer: e.value })}>
+                        responsive={true} autoLayout={true} selection={this.state.selectedOrder} onSelectionChange={e => this.setState({ selectedOrder: e.value })}>
                             <Column field="order_id" header="ID" sortable={true} filter filterPlaceholder="Search id"/>
                             <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
                             <Column field="organization" header="Organization" sortable filter filterPlaceholder="Search name" />

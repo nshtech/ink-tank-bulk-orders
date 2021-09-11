@@ -56,44 +56,6 @@ export class OrderTracker extends Component {
         this.setState({ editing: false });
     }
 
-
-    // updateWeightStatus(props,value, currDate) {
-
-    //     console.log(this.state.customers[props.rowIndex])
-    //     // console.log(props.rowIndex)
-
-    //     //if (value > props.rowData.maxweight) {
-        
-    //     //if (value > firebase.database().ref('/customers/'+props.rowData.id+'/maxweight')) {
-    //     console.log('value: ',value);
-    //     console.log('maxweight comparison: ',parseInt(this.state.customers[props.rowIndex].maxweight));
-    //     if (parseFloat(value) > parseFloat(this.state.customers[props.rowIndex].maxweight)) {
-    //         let over = parseFloat(value) - parseFloat(this.state.customers[props.rowIndex].maxweight)
-    //         console.log('marking as overweight.');
-    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('overweight')
-    //         /*let temp = firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages')
-    //         temp.once('value', (snapshot) => {
-    //             let total = snapshot.val()+over
-    //             firebase.database().ref('/customers/' + props.rowData.id + '/' + 'quarter-overages').set(total)
-    //         })*/
-    //         let updatedCustomers = this.state.customers;
-    //         updatedCustomers[props.rowIndex][props.field] = value;
-    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'overweight';
-    //         //updatedCustomers[props.rowIndex]['quarter-overages'] += parseFloat(value);
-    //         // this.setState({ customers: updatedCustomers });
-    //         return value
-    //     }
-    //     else {
-    //         console.log('marking as underweight');
-    //         firebase.database().ref('/customers/' + props.rowData.id + '/'+'weightstatus').set('underweight')
-    //         let updatedCustomers = this.state.customers;
-    //         updatedCustomers[props.rowIndex][props.field] = value;
-    //         updatedCustomers[props.rowIndex]['weightstatus'] = 'underweight';
-    //         // this.setState({ customers: updatedCustomers });
-    //         return value
-    //     }
-    // }
-
     async onEditorValueChange(props, value) {
 
         firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
@@ -118,6 +80,9 @@ export class OrderTracker extends Component {
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                     db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                    db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/quantity').set(props.rowData.quantity);
                 }
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/date').set(currDate+' '+ currTime);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/blank').set(props.rowData.blank);
@@ -125,6 +90,9 @@ export class OrderTracker extends Component {
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/id').set(props.rowData.order_id);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/team_member').set(props.rowData.team_member);
                 db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/status').set(props.rowData.status);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/final_total').set(props.rowData.final_total);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/order_quote').set(props.rowData.order_quote);
+                db.child('/history/' + currDate +' '+currTime+' - '+ props.rowData.order_id + '/quantity').set(props.rowData.quantity);
 
             })
         firebase.database().ref('/history/' + props.rowData.order_id + '/last_quote_updated').set(currDate + ' ' + currTime)
@@ -177,12 +145,18 @@ export class OrderTracker extends Component {
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                                 db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
                             }
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
                             db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
 
                         })
 
@@ -220,6 +194,91 @@ export class OrderTracker extends Component {
         }
         return currentorder
     }
+
+    teammemberEditor(allorders, currentorder, newteammember) {
+        let updatedOrders = [...allorders];
+        const db = firebase.database().ref()
+        var currDay = new Date().getDate();
+        var currMonth = new Date().getMonth() +1;
+        if (currMonth < 10) {
+            currMonth = '0'+currMonth
+        }
+        if (currDay < 10) {
+            currDay = '0' + currDay
+        }
+        var currYear = new Date().getFullYear();
+        var currDate = currYear + '-' + currMonth + '-'+currDay;
+        //var currDate = new Date().toDateString();
+        var currTime = new Date().toLocaleTimeString('it-IT');
+
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
+            });
+            updatedOrders.map(each => {
+                if (ids.includes(each.order_id)) {
+                    each.team_member = newteammember;
+                    firebase.database().ref('/bulk_orders/' + each.order_id + '/last_status_updated').set(currDate + ' ' + currTime)
+
+                    db.child('/history/' + currDate + each.order_id).once("value")
+                        .then(snapshot => {
+                            if (!snapshot.val()) { 
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id).set(0)
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/blank').set(each.blank);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                                db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
+                            }
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/date').set(currDate+' '+ currTime);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/design').set(each.design);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/id').set(each.order_id);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/team_member').set(each.team_member);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/status').set(each.status);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/final_total').set(each.final_total);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/order_quote').set(each.order_quote);
+                            db.child('/history/' + currDate +' '+currTime+' - '+ each.order_id + '/quantity').set(each.quantity);
+
+                        })
+
+                }
+            })
+            this.setState({ bulk_orders: updatedOrders });
+        }
+        console.log('bagStatusEditor currentorder: ',currentorder);
+        this.dothisfirst_teammember(currentorder, newteammember)
+
+    }
+
+
+    dothisfirst_teammember(currentorder, newteammember) {
+        console.log('currentorder: ',currentorder);
+        console.log('newteammember: ',newteammember);
+        if (currentorder) {
+            var ids = Object.keys(currentorder).map(function (key) {
+                return currentorder[key].order_id;
+            });
+            console.log('ids: ',ids);
+            var query = firebase.database().ref("bulk_orders").orderByKey();
+            query.once("value")
+                .then(function (snapshot) {
+                    snapshot.forEach(function (childSnapshot) {
+                        var key = childSnapshot.key;
+                        if (ids.includes(key)) {
+                            var key = childSnapshot.key;
+                            firebase.database().ref('/bulk_orders/' + key + '/' + "team_member").set(newteammember);
+                            console.log('currentorder in forEach: ',currentorder);
+
+                        }
+                    });
+                });
+        }
+        return currentorder
+    }
+
 
 
     displaySelection(data) {
@@ -261,10 +320,6 @@ export class OrderTracker extends Component {
              showClear={true} placeholder="Select a Status" className="p-column-filter" style={{maxWidth: 200, minWidth: 50}} />
         );
     }
-
-    // weightBodyTemplate(rowData) {
-    //     return <span className={rowData.weightstatus}>{rowData.weightstatus}</span>;
-    // }
 
 
     onStatusFilterChange(event) {
@@ -308,16 +363,11 @@ export class OrderTracker extends Component {
         this.setState({ selectedTeamMember: event.value });
     }
 
-
-
-
-
-
     loadInitialState = async () => {
         const customerArray = [];
         firebase.database().ref('/bulk_orders').on('value', function (snapshot) {
             snapshot.forEach(function (childSnapshot) {
-                if (childSnapshot.val().active === 'True' ) {
+                if (childSnapshot.val().active === 'Yes' || childSnapshot.val().active === 'True') {
                     customerArray.push(childSnapshot.toJSON());
                 }
 
@@ -369,6 +419,19 @@ export class OrderTracker extends Component {
 
                 </div>
                 <div>
+                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Caden Gaviria" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Caden Gaviria')}}>
+                    </Button>
+                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Philippe Manzone" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Philippe Manzone') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Alec Aragon" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Alec Aragon') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shannon Groves" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Shannon Groves') }}>
+                    </Button>
+                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Ali Kilic" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Ali Kilic') }}>
+                    </Button>
+
+                </div>
+                <div>
 
                 </div>
             </div>;
@@ -391,15 +454,10 @@ export class OrderTracker extends Component {
                             <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true}  exportable={false}/>
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
-                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-
-                            {/* <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  exportable={false}/>
-                            <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} /> 
-                            <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter} />
-                            <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
-
-                            <Column field="weekweight" header="Bag Weight" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/> */}
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }}  sortable={true}  exportable={false} editor={this.generalEditor}/>
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
+                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor}/>
                         </DataTable>
                     </div>
                 </div>
@@ -430,10 +488,7 @@ export class OrderTracker extends Component {
                             <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} body={this.statusBodyTemplate} exportable={false}/>
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
                             <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
-                            {/* <Column field="reshall" header="Residential Hall" style={{ maxWidth: 200 }} sortable={true} filter filterElement={reshallFilter} />
-                            <Column field="laundrystatus" header="Bag Status" style={{ maxWidth: 150 }} sortable={true} filter filterElement={statusFilter}  />
-                            <Column field="weightstatus" header="Weight Status" style={{ maxWidth: 150 }} sortable={true} />
-                            <Column field="weekweight" header="Bag Weight" style={{ maxWidth: 100 }} sortable={true} /> */}
+                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }}/>
 
                         </DataTable>
                     </div>
