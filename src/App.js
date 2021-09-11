@@ -1,27 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
-import {AppTopbar} from './AppTopbar';
-import {AppFooter} from './AppFooter';
-import {AppMenu} from './AppMenu';
-import {AppProfile} from './AppProfile';
+import { AppTopbar } from './AppTopbar';
+import { AppFooter } from './AppFooter';
+import { AppMenu } from './AppMenu';
+import { AppProfile } from './AppProfile';
 import { Button } from 'primereact/button';
-import {Route} from 'react-router-dom';
-import {Dashboard} from './components/Dashboard';
+import { Route } from 'react-router-dom';
+import { Dashboard } from './components/Dashboard';
 import { OrderSearch } from './components/OrderSearch';
 import { OrderTracker } from './components/OrderTracker';
 import { OrderSheet } from './components/OrderSheet';
 import { AddOrders } from './components/AddOrders';
-import {FormsDemo} from './components/FormsDemo';
-import {SampleDemo} from './components/SampleDemo';
-import {DataDemo} from './components/DataDemo';
-import {PanelsDemo} from './components/PanelsDemo';
-import {OverlaysDemo} from './components/OverlaysDemo';
-import {MenusDemo} from './components/MenusDemo';
-import {MessagesDemo} from './components/MessagesDemo';
-import {ChartsDemo} from './components/ChartsDemo';
-import {MiscDemo} from './components/MiscDemo';
-import {EmptyPage} from './components/EmptyPage';
-import {Documentation} from "./components/Documentation";
+import { FormsDemo } from './components/FormsDemo';
+import { SampleDemo } from './components/SampleDemo';
+import { DataDemo } from './components/DataDemo';
+import { PanelsDemo } from './components/PanelsDemo';
+import { OverlaysDemo } from './components/OverlaysDemo';
+import { MenusDemo } from './components/MenusDemo';
+import { MessagesDemo } from './components/MessagesDemo';
+import { ChartsDemo } from './components/ChartsDemo';
+import { MiscDemo } from './components/MiscDemo';
+import { EmptyPage } from './components/EmptyPage';
+import { Documentation } from "./components/Documentation";
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -49,7 +49,7 @@ const firebaseConfig = {
     messagingSenderId: "231641991110",
     appId: "1:231641991110:web:ddd67fd2b417573e7514c7",
     measurementId: "G-7TDVQM7S2X"
-  };
+};
 firebase.initializeApp(firebaseConfig);
 
 export const provider = new firebase.auth.GoogleAuthProvider();
@@ -86,8 +86,8 @@ class App extends Component {
                 this.setState({
                     user
                 })
-                {window.location.reload()}
-                {window.location = '/'}
+                { window.location.reload() }
+                { window.location = '/' }
 
             });
     }
@@ -99,7 +99,7 @@ class App extends Component {
                 this.setState({
                     user: null
                 })
-                {window.location = '/#/sign-out'}
+                { window.location = '/#/sign-out' }
 
             });
     }
@@ -146,7 +146,7 @@ class App extends Component {
 
     onMenuItemClick(event) {
 
-        if(!event.item.items) {
+        if (!event.item.items) {
             this.setState({
                 overlayMenuActive: false,
                 mobileMenuActive: false
@@ -157,25 +157,10 @@ class App extends Component {
 
     createMenu() {
         this.menu = [
-          {label: 'Dashboard', icon: 'pi pi-fw pi-home', command: () => {window.location = '#/'}},
-          {
-            label: 'Order Details',
-            icon: 'pi pi-fw pi-users',
-            items: [
-                {
-                    label: 'Search',
-                    icon: 'pi pi-fw pi-search',
-                    to: '/ordersearch'
-                },
-                {
-                    label: 'Add New Order Inquiry',
-                    icon: 'pi pi-fw pi-user-plus',
-                    to: '/addorders'
-                }
-
-            ],
-        },
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', command: () => { window.location = '#/' } },
             { label: 'Order Tracker', icon: 'pi pi-fw pi-check', to: '/ordertracker' },
+            {label: 'Add New Order Inquiry', icon: 'pi pi-fw pi-user-plus', to: '/addorders' },
+            {label: 'Order Details', icon: 'pi pi-fw pi-search', to: '/ordersearch' },
             { label: 'History', icon: 'pi pi-fw pi-inbox', to: '/ordersheet' },
 
         ];
@@ -262,69 +247,69 @@ class App extends Component {
 
 
         return (
-          <div>
-
-            {this.state.user && !this.state.user.email.includes('studentholdings.org') ?
-            <div className="p-grid-login">
-                <div className="p-col-12">
-                <div className="login-error">
-                  <p>FAILED LOG IN</p>
-                    </div>
-                      <div className="card login-card">
-
-                        <h1>Rez Laundry Ops App</h1>
-                        <p>Log in with your SH email for access.</p>
-
-                        <div className="login-centered">
-                            <Button label="Log In" className="p-button-raised p-button-secondary" onClick={this.login} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            :
             <div>
-                {this.state.user && this.state.user.email.includes('studentholdings.org') ?
-                <div>
-                    <div className={wrapperClass} onClick={this.onWrapperClick}>
-                            <AppTopbar onToggleMenu={this.onToggleMenu} logout={this.logout} />
 
-                        <div ref={(el) => this.sidebar = el} className='layout-sidebar' onClick={this.onSidebarClick}>
-                            <div className="layout-logo">
-                                <img alt="Logo" className="login-logo" src="/images/baglogo_2.png" />
-                            </div>
-                            <AppProfile user={this.state.user} />
-                            <AppMenu model={this.menu} onMenuItemClick={this.onMenuItemClick} />
-                        </div>
-                        <div className="layout-main">
-                            <Route path="/" exact component={Dashboard} />
-                            <Route path="/ordersearch" component={OrderSearch} />
-                            <Route path="/ordertracker" component={OrderTracker} />
-                            <Route path="/ordersheet" component={OrderSheet} />
-                            <Route path="/addorders" component={AddOrders} />
-                            <Route path="/menudemo" component={MenusDemo} />
-                        </div>
-
-                        <AppFooter />
-
-                        <div className="layout-mask"></div>
-                    </div>
-                    </div>
-                    :
+                {this.state.user && !this.state.user.email.includes('studentholdings.org') ?
                     <div className="p-grid-login">
                         <div className="p-col-12">
+                            <div className="login-error">
+                                <p>FAILED LOG IN</p>
+                            </div>
                             <div className="card login-card">
+
                                 <h1>Rez Laundry Ops App</h1>
                                 <p>Log in with your SH email for access.</p>
+
                                 <div className="login-centered">
                                     <Button label="Log In" className="p-button-raised p-button-secondary" onClick={this.login} />
                                 </div>
                             </div>
                         </div>
                     </div>
+                    :
+                    <div>
+                        {this.state.user && this.state.user.email.includes('studentholdings.org') ?
+                            <div>
+                                <div className={wrapperClass} onClick={this.onWrapperClick}>
+                                    <AppTopbar onToggleMenu={this.onToggleMenu} logout={this.logout} />
+
+                                    <div ref={(el) => this.sidebar = el} className='layout-sidebar' onClick={this.onSidebarClick}>
+                                        <div className="layout-logo">
+                                        <img alt="Logo" className="login-logo" src="/images/ink_tank_logo.png" />
+                                        </div>
+                                        <AppProfile user={this.state.user} />
+                                        <AppMenu model={this.menu} onMenuItemClick={this.onMenuItemClick} />
+                                    </div>
+                                    <div className="layout-main">
+                                        <Route path="/" exact component={Dashboard} />
+                                        <Route path="/ordersearch" component={OrderSearch} />
+                                        <Route path="/ordertracker" component={OrderTracker} />
+                                        <Route path="/ordersheet" component={OrderSheet} />
+                                        <Route path="/addorders" component={AddOrders} />
+                                        <Route path="/menudemo" component={MenusDemo} />
+                                    </div>
+
+                                    <AppFooter />
+
+                                    <div className="layout-mask"></div>
+                                </div>
+                            </div>
+                            :
+                            <div className="p-grid-login">
+                                <div className="p-col-12">
+                                    <div className="card login-card">
+                                        <h1>Rez Laundry Ops App</h1>
+                                        <p>Log in with your SH email for access.</p>
+                                        <div className="login-centered">
+                                            <Button label="Log In" className="p-button-raised p-button-secondary" onClick={this.login} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
-          }
-          </div>
         );
     }
 }
