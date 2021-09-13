@@ -81,14 +81,14 @@ export class CustomerSheet extends Component {
     }
 
     renderStatusFilter() {
-        var statuses =  [
-            {label: 'Picked Up', value: 'picked-up'},
-            {label: 'Out of Service', value: 'out-of-service'},
-            {label: 'Delivered to SH', value: 'delivered-to-SH'},
-            {label: 'Delivered to Dorm', value: 'delivered-to-dorm'},
-            {label: 'Bag Missing', value: 'bag-missing'},
-            { label: 'Start of Quarter', value: 'start-of-quarter' }
-                ];
+        var statuses = [
+            { label: 'Confirmed', value: 'confirmed' },
+            { label: 'In Production', value: 'in production' },
+            { label: 'Invoiced', value: 'invoiced' },
+            { label: 'Fulfilled', value: 'fulfilled' },
+            { label: 'Shipped', value: 'Shipped' },
+            { label: 'Quote', value: 'quote' }
+        ];
         return (
             <Dropdown value={this.state.selectedStatus} options={statuses} onChange={this.onStatusFilterChange}
                 showClear={true} placeholder="Filter Status" className="p-column-filter" style={{ maxWidth: 200, minWidth: 50 }}/>
@@ -96,9 +96,10 @@ export class CustomerSheet extends Component {
     }
 
     onStatusFilterChange(event) {
-        this.dt.filter(event.value, 'laundrystatus', 'equals');
-        this.setState({selectedStatus: event.value});
+        this.dt.filter(event.value, 'status', 'equals');
+        this.setState({ selectedStatus: event.value });
     }
+
 
     componentDidMount() {
         const customerArray = [];
@@ -129,7 +130,7 @@ export class CustomerSheet extends Component {
                 <Growl ref={(el) => this.growl = el} />
                 <div className="card">
                     <h1>Ink Tank Bulk Orders Dashboard</h1>
-                    <p>This page will list either just current or all ongoing and past ink tank bulk orders.</p>
+                    <p>NOTE: This page only displays active orders. Orders marked as "fulfilled" or "cancelled" will not appear here. Please find them on the Order Details page. </p>
                     <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} >
                         <Column field="order_id" header="ID" sortable={true} />
                         <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search name" exportable={false}/>

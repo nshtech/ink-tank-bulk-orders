@@ -161,7 +161,7 @@ class App extends Component {
             { label: 'Order Tracker', icon: 'pi pi-fw pi-check', to: '/ordertracker' },
             {label: 'Add New Order Inquiry', icon: 'pi pi-fw pi-user-plus', to: '/addorders' },
             {label: 'Order Details', icon: 'pi pi-fw pi-search', to: '/ordersearch' },
-            { label: 'History', icon: 'pi pi-fw pi-inbox', to: '/ordersheet' },
+            //{ label: 'History', icon: 'pi pi-fw pi-inbox', to: '/ordersheet' },
 
         ];
     }

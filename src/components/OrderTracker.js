@@ -4,6 +4,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column'
 import { InputText } from 'primereact/inputtext';
+import { SelectButton } from 'primereact/selectbutton';
+import { ToggleButton } from 'primereact/togglebutton';
+import { RadioButton } from 'primereact/radiobutton';
 import { p } from 'react';
 
 import firebase from 'firebase/app';
@@ -27,9 +30,14 @@ export class OrderTracker extends Component {
             bulk_orders: [],
             selectedStatus: null,
             selectedTeamMember: null,
+            selectedToggle: null,
             editing: false,
             loading: true,
-            selectedOrders: null
+            selectedOrders: null,
+            planYesNo: [
+                { label: 'Yes', value: 'Yes' },
+                { label: 'No', value: 'No' }
+            ]
         };
         this.edit = this.edit.bind(this);
         this.save = this.save.bind(this);
@@ -40,6 +48,7 @@ export class OrderTracker extends Component {
         this.displaySelection = this.displaySelection.bind(this)
         this.loadInitialState = this.loadInitialState.bind(this)
         this.generalEditor = this.generalEditor.bind(this);
+        this.dropdownEditor = this.dropdownEditor.bind(this);
 
 
 
@@ -58,7 +67,7 @@ export class OrderTracker extends Component {
     }
 
     async onEditorValueChange(props, value) {
-
+        console.log('value: ', value, '\tfield: ', props.field);
         firebase.database().ref('/bulk_orders/' + props.rowData.order_id + '/' + props.field).set(value)
         let updatedOrders = this.state.bulk_orders;
         updatedOrders[props.rowIndex][props.field] = value;
@@ -103,7 +112,31 @@ export class OrderTracker extends Component {
     }
 
     inputTextEditor(props, field) {
-        return <InputText type="text" value={props.rowData[field]} style={{ maxWidth: 100 }} onChange={(e) => { this.onEditorValueChange(props, e.target.value); }} />
+        console.log('props.rowData[props.field]: ', props.rowData[props.field]);
+
+        if (field === "design" || field === "tax_exempt") {
+            return <InputText type="text" value={props.rowData[props.field]} tooltip="Yes or No only" placeholder={props.rowData[props.field]} className="p-inputtext-sm p-d-block p-mb-2" style={{ maxWidth: 100 }} onChange={(e) => { this.onEditorValueChange(props, e.target.value); }} />
+
+        }
+        return <InputText type="text" value={props.rowData[field]} placeholder={props.rowData[field]} className="p-inputtext-sm p-d-block p-mb-2" style={{ maxWidth: 100 }} onChange={(e) => { this.onEditorValueChange(props, e.target.value); }} />
+    }
+
+    dropdownEditor(props, field) {
+        //return <Dropdown value={props.rowData[field]} style={{ width: 20 }} options={this.state.planYesNo} onChange={(e) => { this.onEditorValueChange(props, e.target.value); }} />
+        //return <SelectButton value={this.state.planYesNo[props.rowData[field]]} options={this.state.planYesNo} style={{ maxWidth: 100 }} onChange={(e) => { this.onEditorValueChange(props, e.label); }} />
+        //this.setState({selectedToggle: props.rowData[field]})
+        //return <ToggleButton checked={props.rowData[field]} onChange={(e) => {this.onEditorValueChange(props, e.value); }} onLabel="Yes" offLabel="No" onIcon="pi pi-check" offIcon="pi pi-times" />
+        let choice = props.rowData[props.field];
+        return <div className="card">
+            <div className="p-field-radiobutton">
+                <RadioButton inputId="choice1" name="yes" value={choice} onChange={(e) => { choice = e.value; this.onEditorValueChange(props, e.value); }} checked={choice === 'Yes'} />
+                <label >Yes</label>
+            </div>
+            <div className="p-field-radiobutton">
+                <RadioButton inputId="choice2" name="no" value={choice} onChange={(e) => { choice = e.value; this.onEditorValueChange(props, e.value); }} checked={choice === 'No'} />
+                <label >No</label>
+            </div>
+        </div>
     }
 
     generalEditor(props, field) {
@@ -424,38 +457,42 @@ export class OrderTracker extends Component {
                     </Button>
                 </div>
                 <div style={{ marginBottom: 10 }}>
+                    <p>To edit order status or team member, select the rows you want to edit, and then use the buttons to set fields.</p>
+                    <p>Columns highlighted in purple can be individually edited. Click on the cell you'd like to edit to make changes.</p>
+                </div>
+                <div style={{ marginBottom: 10 }}>
                     <p>Order Status: &emsp;
-                    <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Invoiced" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'invoiced') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Quote" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'quote') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#c532a0', backgroundColor: '#f5d4f5', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Confirmed" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'confirmed') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#8A5340', backgroundColor: '#FEEDAF', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="In Production" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'in-production') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shipped" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'shipped') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Fulfilled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'fulfilled') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Cancelled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'cancelled') }}>
-                    </Button>
+                        <Button type="button" style={{ color: '#694382', backgroundColor: '#ECCFFF', borderColor: '#23547B', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Invoiced" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'invoiced') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#23547B', backgroundColor: '#B3E5FC', borderColor: '#694382', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Quote" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'quote') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#c532a0', backgroundColor: '#f5d4f5', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Confirmed" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'confirmed') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#8A5340', backgroundColor: '#FEEDAF', borderColor: '#256029', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="In Production" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'in-production') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#474549', backgroundColor: 'lightgrey', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Shipped" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'shipped') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#256029', backgroundColor: '#C8E6C9', borderColor: '#474549', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Fulfilled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'fulfilled') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#C63737', backgroundColor: '#FFCDD2', borderColor: '#C63737', marginRight: 10 }} icon="pi pi-check" iconPos="left" label="Cancelled" onClick={() => { this.bagStatusEditor(allorders, currentorder, 'cancelled') }}>
+                        </Button>
                     </p>
 
 
 
                 </div>
                 <div>
-                <p>Assigned Team Member: &emsp;
-                    <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Caden Gaviria" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Caden Gaviria') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Philippe Manzone" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Philippe Manzone') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Alec Aragon" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Alec Aragon') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Shannon Groves" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Shannon Groves') }}>
-                    </Button>
-                    <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Ali Kilic" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Ali Kilic') }}>
-                    </Button>
+                    <p>Assigned Team Member: &emsp;
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Caden Gaviria" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Caden Gaviria') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Philippe Manzone" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Philippe Manzone') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Alec Aragon" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Alec Aragon') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Shannon Groves" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Shannon Groves') }}>
+                        </Button>
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Ali Kilic" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Ali Kilic') }}>
+                        </Button>
                     </p>
 
                 </div>
@@ -470,6 +507,7 @@ export class OrderTracker extends Component {
                         <h1>Ink Tank Bulk Order Tracker</h1>
                         <p>This page will be where sales/finance team members can update the status of an order or the team member assigned to it.</p>
                         <p>ONLY individuals running operations should be accessing this page.</p>
+                        <p>NOTE: This page only displays active orders. Orders marked as "fulfilled" or "cancelled" will not appear here. Please find them on the Order Details page. </p>
                         <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true}
                             editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}
                             footer={this.displaySelection(this.state.selectedOrders)} selection={this.state.selectedOrders} onSelectionChange={e => this.setState({ selectedOrders: e.value })}>
@@ -477,14 +515,14 @@ export class OrderTracker extends Component {
                             <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
                             <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} exportable={false} />
-                            <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true} />
-                            <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true} exportable={false} />
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true} exportable={false} />
-                            <Column field="status" header="Status" style={{ maxWidth: 100 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false} />
-                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }} sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} exportable={false} editor={this.generalEditor} />
-                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor} />
-                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor} />
-                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 100 }} editor={this.generalEditor} />
+                            <Column field="status" header="Status" style={{ maxWidth: 120 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false} />
+                            <Column field="design" header="Design" style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} sortable={true} editor={this.generalEditor} />
+                            <Column field="tax_exempt" header="Tax Exempt" style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} sortable={true} exportable={false} editor={this.generalEditor} />
+                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }} sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 120 }} exportable={false} editor={this.generalEditor} />
+                            <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} editor={this.generalEditor} />
+                            <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} editor={this.generalEditor} />
+                            <Column field="final_total" header="Final Total" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} editor={this.generalEditor} />
                         </DataTable>
                     </div>
                 </div>
@@ -504,18 +542,19 @@ export class OrderTracker extends Component {
                         <h1>Ink Tank Bulk Order Tracker</h1>
                         <p>This page will be where sales/finance team members can update the status of an order or the team member assigned to it.</p>
                         <p>ONLY individuals running operations should be accessing this page.</p>
+                        <p>NOTE: This page only displays active orders. Orders marked as "fulfilled" or "cancelled" will not appear here. Please find them on the Order Details page. </p>
                         <DataTable value={this.state.bulk_orders} header={header} ref={(el) => { this.dt = el; }} style={{ marginBottom: '20px' }} responsive={true} autoLayout={true} editMode="row" rowEditorValidator={this.onRowEditorValidator} onRowEditInit={this.onRowEditInit} onRowEditSave={this.onRowEditSave} onRowEditCancel={this.onRowEditCancel}>
                             <Column field="order_id" header="ID" sortable={true} />
                             <Column field="name" header="Name" style={{ maxWidth: 150 }} sortable filter filterPlaceholder="Search by name" />
                             <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} exportable={false} />
-                            <Column field="design" header="Design" style={{ maxWidth: 100 }} sortable={true} />
-                            <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 100 }} sortable={true} exportable={false} />
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true} exportable={false} />
-                            <Column field="status" header=" Status " style={{ maxWidth: 100 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false} />
-                            <Column field="blank" header="Blank" style={{ maxWidth: 150 }} sortable={true} exportable={false} />
-                            <Column field="order_quote" header="Order Quote" sortable={true} />
-                            <Column field="final_total" header="Final Total" sortable={true} />
-                            <Column field="quantity" header="Quantity" sortable={true} />
+                            <Column field="status" header=" Status " style={{ maxWidth: 120 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false} />
+                            <Column field="design" header="Design" style={{ maxWidth: 80 }} sortable={true} />
+                            <Column field="tax_exempt" header="Tax Exempt" style={{ maxWidth: 80 }} sortable={true} exportable={false} />
+                            <Column field="blank" header="Blank" style={{ maxWidth: 120 }} sortable={true} exportable={false} />
+                            <Column field="quantity" header="Quantity" style={{ maxWidth: 80 }} sortable={true} />
+                            <Column field="order_quote" header="Order Quote" style={{ maxWidth: 80 }} sortable={true} />
+                            <Column field="final_total" header="Final Total" style={{ maxWidth: 80 }} sortable={true} />
 
                         </DataTable>
                     </div>

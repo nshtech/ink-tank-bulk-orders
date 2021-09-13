@@ -35,19 +35,26 @@ export class AddOrders extends Component {
             selectedOrders: null,
             editing: false,
             idcount: null,
-            newfirstname: null,
-            newlastname: null,
-            newid: null,
-            newplanYear: null,
-            newplanQuarter: null,
-            newmax: null,
-            newreshall: null,
-            newphone: null,
-            newemail: null,
-            newaddress: null,
-            newcity: null,
-            newstate: null,
-            newpostalcode: null,
+            name: '',
+            team_member: '',
+            blank: '',
+            design: '',
+            organization: '',
+            tax_exempt: '',
+            quantity: '',
+            order_quote: '',
+            final_total: '',
+            phone: '',
+            email: '',
+            newaddress: '',
+            address: '',
+            newcity: '',
+            city: '',
+            newstate: '',
+            state: '',
+            newpostalcode: '',
+            postal_code: '',
+            ship_address: '',
             planSelectYear: [
                 { label: '2020-2021', value: '2020-2021' },
                 { label: '2021-2022', value: '2021-2022' },
@@ -76,7 +83,6 @@ export class AddOrders extends Component {
 
         };
         this.edit = this.edit.bind(this);
-        this.save = this.save.bind(this);
         this.onTeamMemberValueChange = this.onTeamMemberValueChange.bind(this)
         this.resetNewInfo = this.resetNewInfo.bind(this)
         this.addBulkOrder = this.addBulkOrder.bind(this)
@@ -108,7 +114,7 @@ export class AddOrders extends Component {
         this.setState({ editing: true });
         //this.resetNewInfo();
     }
-
+/*
     save(bulk_order) {
         this.setState({ editing: false });
         //console.log(this.state.newplan)
@@ -116,7 +122,7 @@ export class AddOrders extends Component {
         let newbulkorder = { ...this.state.selectedOrders };
 
         if (this.state.newaddress && this.state.newcity && this.state.newstate && this.state.newpostalcode) {
-            newbulkorder.ship_address = this.state.newaddress + this.state.newcity + this.state.newstate + this.state.newpostalcode;
+            newbulkorder.ship_address = this.state.newaddress + this.state.newcity + ', ' + this.state.newstate + this.state.newpostalcode;
             firebase.database().ref('/bulk_orders/' + bulk_order.order_id + '/ship_address').set(newbulkorder.ship_address);
         }
 
@@ -180,7 +186,7 @@ export class AddOrders extends Component {
         this.setState({ selectedOrders: newbulkorder });
 
     }
-
+*/
     //CUSTOMER INFORMATION EDITING
     onNameValueChange(value) {
         //console.log('new first name: ', value)
