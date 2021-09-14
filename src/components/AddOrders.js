@@ -432,7 +432,7 @@ export class AddOrders extends Component {
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="firstname6">Phone</label>
-                        <InputText value={this.state.phone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }} placeholder='Type Phone Number or "NA"' />
+                        <InputText value={this.state.phone} id="newphone" type="text" onChange={(e) => { this.onPhoneValueChange(e.target.value); }} placeholder='###-###-#### or "NA"' />
                     </div>
 
 

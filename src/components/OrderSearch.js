@@ -232,7 +232,7 @@ export class OrderSearch extends Component {
                                     </div>
                                 </div>
                                 <div className="p-field p-grid">
-                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '120px' }}>Phone:</label>
+                                    <label htmlFor="lastname3" className="p-col-fixed" style={{ width: '120px' }}>Ship Address:</label>
                                     <div className="p-col">
                                         <InputText type="text" placeholder={bulk_order.ship_address} onChange={(e) => { this.onShipAddressValueChange(e.target.value); }}/>
                                     </div>
