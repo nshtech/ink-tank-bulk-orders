@@ -517,8 +517,8 @@ export class OrderTracker extends Component {
                             <Column field="organization" header="Organization" style={{ maxWidth: 150 }} sortable={true} exportable={false} />
                             <Column field="team_member" header="Team Member" style={{ maxWidth: 100 }} sortable={true} exportable={false} />
                             <Column field="status" header="Status" style={{ maxWidth: 120 }} sortable={true} filter filterElement={statusFilter} body={this.statusBodyTemplate} exportable={false} />
-                            <Column field="design" header="Design" style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} sortable={true} editor={this.generalEditor} />
                             <Column field="tax_exempt" header="Tax Exempt" style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} sortable={true} exportable={false} editor={this.generalEditor} />
+                            <Column field="design" header="Design" style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} sortable={true} editor={this.generalEditor} />
                             <Column field="blank" header="Blank" style={{ maxWidth: 150 }} sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 120 }} exportable={false} editor={this.generalEditor} />
                             <Column field="quantity" header="Quantity" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} editor={this.generalEditor} />
                             <Column field="order_quote" header="Order Quote" sortable={true} style={{ backgroundColor: '#6a09a4', color: 'white', maxWidth: 80 }} editor={this.generalEditor} />
