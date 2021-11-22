@@ -467,7 +467,7 @@ export class AddOrders extends Component {
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="firstname6">Email*</label>
-                        <InputText value={this.state.email} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }} />
+                        <InputText value={this.state.email} id="newemail" type="text" onChange={(e) => { this.onEmailValueChange(e.target.value); }} placeholder='Required'/>
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="firstname6">Phone</label>
