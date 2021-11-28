@@ -68,7 +68,8 @@ export class AddOrders extends Component {
                 { label: 'Philippe Manzone', value: 'Philippe Manzone' },
                 { label: 'Alec Aragon', value: 'Alec Aragon' },
                 { label: 'Shannon Groves', value: 'Shannon Groves' },
-                { label: 'Ali Kilic', value: 'Ali Kilic' }
+                { label: 'Ali Kilic', value: 'Ali Kilic' },
+                { label: 'Kethan Bajaj', value: 'Kethan Bajaj' }
             ],
             planSelectStatus: [
                 { label: 'Confirmed', value: 'confirmed' },

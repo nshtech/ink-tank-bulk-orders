@@ -493,6 +493,8 @@ export class OrderTracker extends Component {
                         </Button>
                         <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Ali Kilic" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Ali Kilic') }}>
                         </Button>
+                        <Button type="button" style={{ color: '#343335', backgroundColor: 'white', borderColor: '#343335', marginRight: 10 }} icon="pi pi-user" iconPos="left" label="Kethan Bajaj" onClick={() => { this.teammemberEditor(allorders, currentorder, 'Kethan Bajaj') }}>
+                        </Button>
                     </p>
 
                 </div>
